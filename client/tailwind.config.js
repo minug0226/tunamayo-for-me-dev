@@ -2,6 +2,9 @@ module.exports = {
   content: ["./src/**/*.{js,jsx,ts,tsx}"],
   theme: {
     extend: {
+      fontFamily: {
+        maple: ["MaplestoryOTFBold"],
+      },
       colors: {
         tnBlue: "#70C3FF",
         tnBlueLight: "#B2DFFF",
