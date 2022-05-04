@@ -10,7 +10,7 @@ export const DB = new DataSource({
   username: process.env.RDS_USERNAME,
   password: process.env.RDS_PASSWORD,
   database: process.env.RDS_DATABASE,
-  synchronize: true,
+  synchronize: false,
   logging: true,
   entities: [__dirname + "/entity/**/*.ts"],
   migrations: [],
