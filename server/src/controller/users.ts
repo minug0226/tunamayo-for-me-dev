@@ -4,12 +4,40 @@ import { User } from "../entity/User";
 import axios from "axios";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+import { CustomRequest } from "../customType/middleware";
+import { Comment } from "../entity/Comment";
+import { request } from "http";
+import { Like } from "../entity/Like";
+import { Report } from "../entity/Report";
 
 dotenv.config();
 
 const userController = {
-  get: async (req: Request, res: Response) => {
-    res.sendStatus(200);
+  get: async (req: CustomRequest, res: Response) => {
+    const userId = req.userId;
+
+    try {
+      const userInfo = await DB.manager.findOne(User, {
+        where: { id: userId },
+      });
+
+      return res.status(200).json({ userInfo });
+    } catch (err) {
+      console.log(err);
+      return res.sendStatus(500);
+    }
+  },
+
+  getMyComment: async (req: CustomRequest, res: Response) => {
+    const userId = req.userId;
+    try {
+      const myComments = await DB.manager.find(Comment, {
+        where: { userId },
+      });
+      return res.status(200).json({ myComments });
+    } catch (err) {
+      return res.sendStatus(500);
+    }
   },
 
   signUp: async (req: Request, res: Response) => {
@@ -185,6 +213,30 @@ const userController = {
   logout: async (req: Request, res: Response) => {
     try {
       res.setHeader("Set-Cookie", "token=; path=/; expires=-1; Max-age=0;");
+      return res.sendStatus(200);
+    } catch (err) {
+      return res.sendStatus(500);
+    }
+  },
+
+  verifyToken: async (req: CustomRequest, res: Response) => {
+    const userId = req.userId;
+    try {
+      return res.status(200).json({ id: userId });
+    } catch (err) {
+      return res.sendStatus(500);
+    }
+  },
+
+  signOut: async (req: CustomRequest, res: Response) => {
+    const userId = req.userId;
+
+    try {
+      await DB.manager.delete(Comment, { id: userId });
+      await DB.manager.delete(Like, { userId });
+      await DB.manager.delete(Report, { userId });
+      await DB.manager.delete(User, { id: userId });
+
       return res.sendStatus(200);
     } catch (err) {
       return res.sendStatus(500);

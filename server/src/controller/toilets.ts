@@ -29,8 +29,33 @@ const toiletController = {
   getComments: async (req: Request, res: Response) => {
     try {
       const { toiletId } = req.params;
-      const commentList = await DB.manager.find(Comment, {
+      const commentId = Number(req.query.commentId);
+      if (commentId) {
+        const comment = await DB.manager.findOne(Comment, {
+          where: { id: commentId },
+        });
+
+        return res.status(206).json({ comment });
+      }
+
+      const query = await DB.manager.find(Comment, {
         where: { toiletId: Number(toiletId) },
+        relations: {
+          user: true,
+        },
+      });
+
+      const commentList = query.map((q) => {
+        return {
+          id: q.id,
+          content: q.content,
+          rating: q.rating,
+          userId: q.userId,
+          toiletId: q.toiletId,
+          createdAt: q.createdAt,
+          updatedAt: q.updatedAt,
+          nickname: q.user.nickname,
+        };
       });
       return res.status(200).json({ commentList });
     } catch (err) {

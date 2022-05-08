@@ -1,9 +1,12 @@
 import express from "express";
 import users from "../controller/users";
+import auth from "../controller/auth";
 
 const router = express.Router();
 
-router.get("/", users.get);
+router.get("/", auth, users.get);
+router.get("/token", auth, users.verifyToken);
+router.get("/comments", auth, users.getMyComment);
 router.post("/signup", users.signUp);
 
 router.get("/kakao", users.kakaoLogin);

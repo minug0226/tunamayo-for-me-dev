@@ -10,6 +10,7 @@ interface UserData {
 
 const auth = async (req: CustomRequest, res: Response, next: NextFunction) => {
   const token = req.cookies?.token;
+
   try {
     if (!token) return res.status(403).json({ message: "Not authorized" });
 

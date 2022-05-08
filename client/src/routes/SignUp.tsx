@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-
-import axios from "axios";
+import { customAxios } from "../lib/customAxios";
 
 const SignUp = () => {
   const location = useLocation();
@@ -42,8 +41,8 @@ const SignUp = () => {
   };
 
   const signUpRequest = () => {
-    axios
-      .post("http://localhost:8080/users/signup", {
+    customAxios
+      .post("/users/signup", {
         nickname,
         email,
         oAuthProvider,
