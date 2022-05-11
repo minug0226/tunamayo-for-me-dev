@@ -1,6 +1,7 @@
 export interface PropsType {
   toiletInfo: ToiletInfoProps;
   commentInfo: CommentInfoProps;
+  modal: boolean;
 }
 
 export interface MyCommentProps {

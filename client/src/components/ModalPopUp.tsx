@@ -1,22 +1,56 @@
 import { useNavigate } from "react-router-dom";
 import { PropsType } from "../lib/interfaces";
 
-const ModalPopUp = ({ toiletInfo, commentInfo }: PropsType) => {
+const ModalPopUp = ({ toiletInfo, commentInfo, modal }: PropsType) => {
   const navigate = useNavigate();
 
+  const modalClass = (modal: boolean) => {
+    if (modal)
+      return "animate-modalPopUp sticky bottom-0 w-full h-[199px] rounded-t-[20px] z-10 bg-[#FEFEFE] shadow-modalPopUp";
+    else
+      return "animate-modalPopDown transition-all duration-[1700ms] sticky bottom-[-50%] w-full h-[199px] rounded-t-[20px] z-10 bg-[#FEFEFE] shadow-modalPopUp";
+  };
+
   return (
-    <div className="sticky bottom-2 w-[95%] mx-auto h-[500px] rounded-md bg-red-400 z-10">
-      <div>Toilet Name: {toiletInfo.title}</div>
-      <div>Toilet Address: {toiletInfo.roadName}</div>
-      <div>Comment avg: {commentInfo.avg}</div>
-      <div>Comments: {commentInfo.length}</div>
-      <button
-        className="border"
-        onClick={() => navigate(`/toilet/${toiletInfo.id}`)}
-      >
-        상세보기
-      </button>
-    </div>
+    <>
+      <div className={modalClass(modal)}>
+        <div className="pt-4 pb-[18px] px-5 border-b border-gray20">
+          <div className="p-1 font-medium text-xl leading-8 text-tnBlack">
+            {toiletInfo.title}
+          </div>
+          <div className="p-1 font-normal text-base leading-[26px] text-gray80">
+            {toiletInfo.roadName}
+          </div>
+          <div className="flex p-1 space-x-[3px] items-center">
+            <div className="font-normal text-sm leading-5 text-gray80">
+              {commentInfo.avg}
+            </div>
+            <div className="flex space-x-1">
+              {[1, 2, 3, 4, 5].map((star, i) => (
+                <img
+                  key={i}
+                  className="w-[15px] h-[15px]"
+                  src="/images/main/star-full.svg"
+                  alt=""
+                />
+              ))}
+            </div>
+            <div className="font-normal text-sm leading-5 text-gray80">
+              ({commentInfo.length})
+            </div>
+          </div>
+        </div>
+
+        <div className="pt-2 flex justify-center">
+          <button
+            className="w-[157px] text-sm font-normal leading-[22px] text-tnDeepBlue cursor-pointer"
+            onClick={() => navigate(`/toilet/${toiletInfo.id}`)}
+          >
+            상세보기
+          </button>
+        </div>
+      </div>
+    </>
   );
 };
 

@@ -6,7 +6,6 @@ import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import { CustomRequest } from "../customType/middleware";
 import { Comment } from "../entity/Comment";
-import { request } from "http";
 import { Like } from "../entity/Like";
 import { Report } from "../entity/Report";
 
