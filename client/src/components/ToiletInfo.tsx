@@ -2,6 +2,9 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { customAxios } from "../lib/customAxios";
 import { IToilet } from "../lib/interfaces";
+import Header from "./Header";
+import ToiletSummary from "./ToiletSummary";
+import ToiletDetails from "./ToiletDetails";
 
 const ToiletInfo = () => {
   const { toiletId } = useParams();
@@ -20,8 +23,11 @@ const ToiletInfo = () => {
   }, []);
 
   return (
-    <div>
-      <div>화장실 명 : {toilet?.toiletName || "-"}</div>
+    <>
+      <Header />
+      <ToiletSummary />
+      <ToiletDetails />
+      {/* <div>화장실 명 : {toilet?.toiletName || "-"}</div>
       <div>화장실 주소 : {toilet?.roadName || "-"}</div>
       <div>개방시간: {toilet?.openTime || "-"}</div>
       <div>남녀공용 : {toilet?.isUnisex || "-"}</div>
@@ -38,8 +44,8 @@ const ToiletInfo = () => {
       <div>남성 어린이용 소변기 수 : {toilet?.boyUrinalCount}</div>
       <div>여성용 대변기 수 : {toilet?.femaleClosetCount}</div>
       <div>여성 장애인용 대변기 수 : {toilet?.handiFemaleClosetCount}</div>
-      <div>여성 어린이용 대변기 수 : {toilet?.girlClosetCount}</div>
-    </div>
+      <div>여성 어린이용 대변기 수 : {toilet?.girlClosetCount}</div> */}
+    </>
   );
 };
 

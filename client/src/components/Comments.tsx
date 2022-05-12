@@ -23,12 +23,16 @@ const Comments = () => {
 
   return (
     <>
-      <button
-        onClick={() => navigate(`/toilet/${toiletId}/comment`)}
-        className="w-full bg-tnBlue"
-      >
-        작성하기
-      </button>
+      <div className="flex justify-between py-[15px] px-5 items-center border-b border-gray20">
+        <div className="w-[72px]"></div>
+        <div className="font-medium leading-8 text-xl text-tnBlack">리뷰</div>
+        <button
+          onClick={() => navigate(`/toilet/${toiletId}/comment`)}
+          className="h-9 w-[72px] bg-tnBlueLight rounded text-tnBlack font-medium text-sm leading-[14px]"
+        >
+          글쓰기
+        </button>
+      </div>
       {commentList.map((comment: IComment) => {
         return (
           <Comment

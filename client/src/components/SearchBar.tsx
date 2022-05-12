@@ -32,6 +32,8 @@ const SearchBar = ({ positions, setCenter }: SearchBarProps) => {
         );
       });
       setMatchingList(filteredToilet);
+    } else {
+      setMatchingList([]);
     }
   }, [keyword]);
 
@@ -59,6 +61,7 @@ const SearchBar = ({ positions, setCenter }: SearchBarProps) => {
                 key={i}
                 onClick={() => {
                   setCenter(toilet.latlng);
+                  setMatchingList([]);
                 }}
               >
                 <div>{toilet.title}</div>

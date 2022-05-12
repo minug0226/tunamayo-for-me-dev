@@ -30,10 +30,15 @@ module.exports = {
           "0%": { opacity: 1, transform: "translateY(0%)" },
           "100%": { opacity: 0, transform: "translateY(100%)" },
         },
+        dropdown: {
+          "0%": { opacity: 0 },
+          "100%": { opacity: 1 },
+        },
       },
       animation: {
         modalPopUp: "modalPopUp 1s ease-in-out",
         modalPopDown: "modalPopDown 1s ease-out",
+        dropdown: "dropdown 300ms ease-in-out",
       },
     },
   },

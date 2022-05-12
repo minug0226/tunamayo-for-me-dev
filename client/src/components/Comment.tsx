@@ -38,10 +38,20 @@ const Comment = ({
   };
 
   return (
-    <div>
-      <div>닉네임 : {nickname}</div>
-      <div>댓글 : {content}</div>
-      <div>별점 : {rating}</div>
+    <div className="border-b border-gray20">
+      <div className="pl-5 pr-[14px] pt-3 pb-[15px]">
+        <div className="flex justify-between items-center mb-6">
+          <div className="font-medium text-tnBlack text-base leading-[26px]">
+            {nickname}
+          </div>
+          <div className="font-medium text-tnBlack text-sm leading-5">
+            {rating.toFixed(1)} *****
+          </div>
+        </div>
+        <div className="font-medium text-tnBlack text-base leading-[26px]">
+          {content}
+        </div>
+      </div>
       {isMine && (
         <div className="flex space-x-3">
           <div
