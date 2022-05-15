@@ -1,7 +1,7 @@
 export interface PropsType {
   toiletInfo: ToiletInfoProps;
   commentInfo: CommentInfoProps;
-  modal: boolean;
+  modalPopUp: boolean;
 }
 
 export interface MyCommentProps {
@@ -67,4 +67,10 @@ export interface IToilet {
   type?: string;
   updatedAt?: string;
   urinalCount?: number;
+}
+
+export interface IUser {
+  nickname?: string;
+  email?: string;
+  isAdmin?: boolean;
 }

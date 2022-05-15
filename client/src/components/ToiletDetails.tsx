@@ -21,7 +21,7 @@ const ToiletDetails = () => {
         ></img>
       </div>
       {dropdown ? (
-        <div className="animate-dropdown transition-all duration-300 pt-3 pl-5 pb-[42px] pr-[25px] bg-[#F6F6F6] text-tnBlack font-normal text-base leading-[26px]">
+        <div className="origin-top animate-dropdown transition-all duration-300 pt-3 pl-5 pb-[42px] pr-[25px] bg-[#F6F6F6] text-tnBlack font-normal text-base leading-[26px]">
           <div className="flex justify-between mb-3">
             <div>남녀공용여부</div>
             <div className="">Y</div>

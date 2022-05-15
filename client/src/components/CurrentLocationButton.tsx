@@ -1,20 +1,9 @@
-interface CurrentLocationProps {
-  modal: boolean;
-}
-
-const CurrentLocationButton = ({ modal }: CurrentLocationProps) => {
-  const buttonClass = (modal: boolean) => {
-    if (modal)
-      return "sticky bottom-[215px] transition-all duration-[1000ms] pr-5 flex";
-    else
-      return "sticky transition-all duration-[1000ms] bottom-[34px] pr-5 flex";
-  };
-
+const CurrentLocationButton = () => {
   return (
-    <div className={buttonClass(modal)}>
-      <div className="flex-1"></div>
-      <div className="w-12 h-12 bg-white shadow-currentLocation rounded-full flex justify-center items-center">
+    <div className="absolute left-[21px] top-[135px] pr-5 flex">
+      <div className="w-11 h-11 bg-white shadow-navButton rounded-full flex justify-center items-center">
         <img
+          className="w-5 h-5"
           src="/images/main/current-location-icon.svg"
           alt="current-location"
         />

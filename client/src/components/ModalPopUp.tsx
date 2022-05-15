@@ -1,19 +1,19 @@
 import { useNavigate } from "react-router-dom";
 import { PropsType } from "../lib/interfaces";
 
-const ModalPopUp = ({ toiletInfo, commentInfo, modal }: PropsType) => {
+const ModalPopUp = ({ toiletInfo, commentInfo, modalPopUp }: PropsType) => {
   const navigate = useNavigate();
 
-  const modalClass = (modal: boolean) => {
-    if (modal)
+  const modalClass = (modalPopUp: boolean) => {
+    if (modalPopUp)
       return "animate-modalPopUp sticky bottom-0 w-full h-[199px] rounded-t-[20px] z-10 bg-[#FEFEFE] shadow-modalPopUp";
     else
-      return "animate-modalPopDown transition-all duration-[1700ms] sticky bottom-[-50%] w-full h-[199px] rounded-t-[20px] z-10 bg-[#FEFEFE] shadow-modalPopUp";
+      return "animate-modalPopDown transition-all hidden duration-[1700ms] sticky bottom-[-50%] w-full h-[199px] rounded-t-[20px] z-10 bg-[#FEFEFE] shadow-modalPopUp";
   };
 
   return (
     <>
-      <div className={modalClass(modal)}>
+      <div className={modalClass(modalPopUp)}>
         <div className="pt-4 pb-[18px] px-5 border-b border-gray20">
           <div className="p-1 font-medium text-xl leading-8 text-tnBlack">
             {toiletInfo.title}

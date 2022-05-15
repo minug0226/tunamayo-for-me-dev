@@ -9,6 +9,7 @@ router.get("/token", auth, users.verifyToken);
 router.get("/comments", auth, users.getMyComment);
 router.post("/signup", users.signUp);
 
+router.patch("/", auth, users.changeNickname);
 router.get("/kakao", users.kakaoLogin);
 router.get("/google", users.googleLogin);
 router.post("/logout", users.logout);

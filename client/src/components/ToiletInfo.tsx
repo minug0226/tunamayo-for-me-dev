@@ -16,8 +16,6 @@ const ToiletInfo = () => {
     setToilet(toiletInfo);
   };
 
-  console.log(toiletId);
-
   useEffect(() => {
     toiletRequest();
   }, []);

@@ -27,6 +27,22 @@ const userController = {
     }
   },
 
+  changeNickname: async (req: CustomRequest, res: Response) => {
+    const userId = req.userId;
+    const { changedNickname } = req.body;
+    try {
+      const isOverlapped = await DB.manager.findOne(User, {
+        where: { nickname: changedNickname },
+      });
+      if (isOverlapped)
+        return res.status(401).json({ message: "nickname overlap" });
+      await DB.manager.update(User, userId, { nickname: changedNickname });
+      return res.sendStatus(200);
+    } catch (err) {
+      return res.sendStatus(500);
+    }
+  },
+
   getMyComment: async (req: CustomRequest, res: Response) => {
     const userId = req.userId;
     try {

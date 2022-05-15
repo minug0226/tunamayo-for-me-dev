@@ -2,16 +2,28 @@ import { Map, MapMarker, MarkerClusterer } from "react-kakao-maps-sdk";
 import { useEffect, useState } from "react";
 import ModalPopUp from "../components/ModalPopUp";
 import { customAxios } from "../lib/customAxios";
-import { IComment, CommentInfoProps, ToiletInfoProps } from "../lib/interfaces";
+import {
+  IComment,
+  CommentInfoProps,
+  ToiletInfoProps,
+  IUser,
+} from "../lib/interfaces";
 import SearchBar from "../components/SearchBar";
 import CurrentLocationButton from "../components/CurrentLocationButton";
+import NavButton from "../components/NavButton";
+import Drawer from "../components/Drawer";
+import Modal from "../components/Modal";
+import { useNavigate } from "react-router-dom";
 
 const Main = () => {
+  const navigate = useNavigate();
+  const [userInfo, setUserInfo] = useState<IUser | null>(null);
   const [positions, setPositions] = useState<any[]>([]);
   const [center, setCenter] = useState({
     lat: 37.5697,
     lng: 126.982,
   });
+  const [modalPopUp, setModalPopUp] = useState(false);
   const [modal, setModal] = useState(false);
   const [create, setCreate] = useState(false);
   const [currentArea, setCurrentArea] = useState({
@@ -24,11 +36,25 @@ const Main = () => {
     roadName: "",
     id: 0,
   });
-
   const [commentInfo, setCommentInfo] = useState<CommentInfoProps>({
     length: 0,
     avg: 0,
   });
+  const [drawer, setDrawer] = useState<boolean>(false);
+  const [drawerClose, setDrawerClose] = useState<boolean>(false);
+  const drawerAction = () => {
+    setDrawerClose(true);
+    setTimeout(() => {
+      setDrawer(false);
+      setDrawerClose(false);
+    }, 500);
+  };
+
+  const overlayClass = () => {
+    if (drawerClose)
+      return "animate-overlayHide absolute top-0 bg-black opacity-40 w-full h-[100vh] z-40";
+    else return "absolute top-0 bg-black opacity-40 w-full h-[100vh] z-40";
+  };
 
   const commentRequest = async (toiletId: number) => {
     const request = await customAxios.get(`/toilets/${toiletId}/comments`);
@@ -57,6 +83,10 @@ const Main = () => {
       });
       setPositions(newData);
     });
+  }, []);
+
+  useEffect(() => {
+    customAxios.get("/users").then((res) => setUserInfo(res.data.userInfo));
   }, []);
 
   const changeCurrentArea = (map: any) => {
@@ -93,6 +123,10 @@ const Main = () => {
   return (
     <>
       <div className="relative">
+        {drawer ? (
+          <div onClick={() => drawerAction()} className={overlayClass()}></div>
+        ) : null}
+
         <Map // 지도를 표시할 Container
           center={center}
           className="w-full h-[100vh] z-0"
@@ -112,9 +146,13 @@ const Main = () => {
           onDragEnd={(map) => {
             changeCurrentArea(map);
           }}
-          onClick={() => setModal(false)}
+          onClick={() => {
+            setModalPopUp(false);
+          }}
         >
           <SearchBar positions={positions} setCenter={setCenter} />
+          <NavButton setDrawer={setDrawer} />
+          <CurrentLocationButton />
           <MarkerClusterer
             averageCenter={true} // 클러스터에 포함된 마커들의 평균 위치를 클러스터 마커 위치로 설정
             minLevel={4} // 클러스터 할 최소 지도 레벨
@@ -125,20 +163,35 @@ const Main = () => {
                 position={position.latlng} // 마커를 표시할 위치
                 // 마커의 타이틀, 마커에 마우스를 올리면 타이틀이 표시됩니다
                 onClick={() => {
-                  setModal(true);
+                  setModalPopUp(true);
                   setToiletInfo(position);
                   commentRequest(position.id);
                 }}
               />
             ))}
           </MarkerClusterer>
-          <CurrentLocationButton modal={modal} />
+
           <ModalPopUp
-            modal={modal}
+            modalPopUp={modalPopUp}
             commentInfo={commentInfo}
             toiletInfo={toiletInfo}
           />
         </Map>
+        {modal && (
+          <Modal
+            setModal={setModal}
+            title="로그인이 필요합니다."
+            left="취소"
+            right="로그인"
+            action={() => navigate("/login")}
+          />
+        )}
+        <Drawer
+          drawer={drawer}
+          drawerClose={drawerClose}
+          userInfo={userInfo}
+          setModal={setModal}
+        />
       </div>
     </>
   );

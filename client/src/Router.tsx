@@ -10,6 +10,7 @@ import MyComments from "./routes/MyComments";
 import WriteReport from "./routes/WriteReport";
 import Admin from "./routes/Admin";
 import ReportList from "./routes/ReportList";
+import EditProfile from "./routes/EditProfile";
 
 const Router = () => {
   return (
@@ -27,6 +28,7 @@ const Router = () => {
           <Route path="report" element={<WriteReport />} />
           <Route path="admin" element={<Admin />} />
           <Route path="admin/reports" element={<ReportList />} />
+          <Route path="profile" element={<EditProfile />} />
         </Routes>
       </BrowserRouter>
     </>

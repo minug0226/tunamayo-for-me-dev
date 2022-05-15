@@ -81,7 +81,7 @@ const SignUp = () => {
               }}
               className="cursor-pointer absolute right-3 top-3.5 z-10"
               src="/images/delete.svg"
-              alt=""
+              alt="clear-button"
             />
           ) : null}
           {signupErrorMessage ===
