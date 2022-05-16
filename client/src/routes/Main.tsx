@@ -14,15 +14,23 @@ import NavButton from "../components/NavButton";
 import Drawer from "../components/Drawer";
 import Modal from "../components/Modal";
 import { useNavigate } from "react-router-dom";
+import CurrentLocationLoading from "../components/CurrentLocationLoading";
 
 const Main = () => {
   const navigate = useNavigate();
   const [userInfo, setUserInfo] = useState<IUser | null>(null);
   const [positions, setPositions] = useState<any[]>([]);
   const [center, setCenter] = useState({
-    lat: 37.5697,
-    lng: 126.982,
+    center: {
+      lat: 37.5697,
+      lng: 126.982,
+    },
+    isAllow: false,
   });
+
+  const [currentLocationClick, setCurrentLocationClick] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
   const [modalPopUp, setModalPopUp] = useState(false);
   const [modal, setModal] = useState(false);
   const [create, setCreate] = useState(false);
@@ -89,6 +97,33 @@ const Main = () => {
     customAxios.get("/users").then((res) => setUserInfo(res.data.userInfo));
   }, []);
 
+  useEffect(() => {
+    if (navigator.geolocation) {
+      // GeoLocation을 사용해서 사용자의 위치를 얻어온다.
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setCenter((prev) => ({
+            ...prev,
+            center: {
+              lat: position.coords.latitude,
+              lng: position.coords.longitude,
+            },
+            isAllow: true,
+          }));
+          setIsLoading(false);
+        },
+        (err) => {
+          setIsLoading(false);
+          console.log(err);
+        }
+      );
+    }
+    // 사용자가 위치 동의 허용을 하지 않았을 때
+    else {
+      setIsLoading(false);
+    }
+  }, []);
+
   const changeCurrentArea = (map: any) => {
     setCurrentArea({
       sw: {
@@ -128,7 +163,7 @@ const Main = () => {
         ) : null}
 
         <Map // 지도를 표시할 Container
-          center={center}
+          center={center.center}
           className="w-full h-[100vh] z-0"
           level={2} // 지도의 확대 레벨
           onCreate={(map) => {
@@ -152,24 +187,39 @@ const Main = () => {
         >
           <SearchBar positions={positions} setCenter={setCenter} />
           <NavButton setDrawer={setDrawer} />
-          <CurrentLocationButton />
-          <MarkerClusterer
-            averageCenter={true} // 클러스터에 포함된 마커들의 평균 위치를 클러스터 마커 위치로 설정
-            minLevel={4} // 클러스터 할 최소 지도 레벨
-          >
-            {currentPositions.map((position, index) => (
-              <MapMarker
-                key={position.id}
-                position={position.latlng} // 마커를 표시할 위치
-                // 마커의 타이틀, 마커에 마우스를 올리면 타이틀이 표시됩니다
-                onClick={() => {
-                  setModalPopUp(true);
-                  setToiletInfo(position);
-                  commentRequest(position.id);
-                }}
-              />
-            ))}
-          </MarkerClusterer>
+          <CurrentLocationButton setCenter={setCenter} />
+          {isLoading ? (
+            <CurrentLocationLoading />
+          ) : (
+            <MarkerClusterer
+              averageCenter={true} // 클러스터에 포함된 마커들의 평균 위치를 클러스터 마커 위치로 설정
+              minLevel={4} // 클러스터 할 최소 지도 레벨
+            >
+              {currentPositions.map((position, index) => (
+                <MapMarker
+                  key={position.id}
+                  position={position.latlng} // 마커를 표시할 위치
+                  // 마커의 타이틀, 마커에 마우스를 올리면 타이틀이 표시됩니다
+                  onClick={() => {
+                    setModalPopUp(true);
+                    setToiletInfo(position);
+                    commentRequest(position.id);
+                  }}
+                />
+              ))}
+            </MarkerClusterer>
+          )}
+          {center.isAllow && (
+            <MapMarker
+              key="current-location"
+              position={center.center}
+              image={{
+                src: "/images/main/current-marker.png",
+                size: { width: 48, height: 57.78 },
+                options: { className: "animate-spin" },
+              }}
+            />
+          )}
 
           <ModalPopUp
             modalPopUp={modalPopUp}
