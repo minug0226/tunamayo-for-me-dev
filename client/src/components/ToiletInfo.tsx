@@ -22,9 +22,9 @@ const ToiletInfo = () => {
 
   return (
     <>
-      <Header />
-      <ToiletSummary />
-      <ToiletDetails />
+      <Header toilet={toilet} />
+      <ToiletSummary toilet={toilet} />
+      <ToiletDetails toilet={toilet} />
       {/* <div>화장실 명 : {toilet?.toiletName || "-"}</div>
       <div>화장실 주소 : {toilet?.roadName || "-"}</div>
       <div>개방시간: {toilet?.openTime || "-"}</div>

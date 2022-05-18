@@ -62,7 +62,7 @@ const SearchBar = ({ positions, setCenter }: SearchBarProps) => {
               />
               {keyword.length ? (
                 <img
-                  src="/images/delete.svg"
+                  src="/images/common/delete.svg"
                   alt="clear-button"
                   onClick={() => {
                     setKeyword("");
@@ -79,7 +79,7 @@ const SearchBar = ({ positions, setCenter }: SearchBarProps) => {
                     <div
                       key={i}
                       onClick={() => {
-                        setCenter(toilet.latlng);
+                        setCenter({ center: toilet.latlng, isAllow: false });
                         setKeyword(toilet.title);
                         setSearchOverlay(false);
                         setMatchingList([]);

@@ -3,18 +3,28 @@ import { useNavigate, useParams } from "react-router-dom";
 import { IComment } from "../lib/interfaces";
 import Comment from "./Comment";
 import { customAxios } from "../lib/customAxios";
+import { useSelector } from "react-redux";
+import Modal from "./Modal";
 
 const Comments = () => {
   const navigate = useNavigate();
+  const isLogin = useSelector<any>((state) => state.isLogin.value);
   const [commentList, setCommentList] = useState<IComment[]>([]);
-  const [deleteState, setDeleteState] = useState(false);
+  const [deleteState, setDeleteState] = useState<boolean>(false);
+  const [showMore, setShowMore] = useState<boolean>(false);
+  const [loginModal, setLoginModal] = useState<boolean>(false);
   const { toiletId } = useParams();
 
   const commentRequest = async () => {
     const request = await customAxios.get(`/toilets/${toiletId}/comments`);
     const { commentList } = request.data;
-    console.log(commentList);
+
     setCommentList(commentList);
+  };
+
+  const writeCommentHandler = () => {
+    if (isLogin) navigate(`/toilet/${toiletId}/comment`);
+    else setLoginModal(true);
   };
 
   useEffect(() => {
@@ -22,18 +32,29 @@ const Comments = () => {
   }, [deleteState]);
 
   return (
-    <>
+    <div>
+      {loginModal && (
+        <Modal
+          setModal={setLoginModal}
+          title="앗! 로그인이 필요합니다 😅"
+          left="취소"
+          right="로그인하기"
+          action={() => navigate("/login")}
+        />
+      )}
+
       <div className="flex justify-between py-[15px] px-5 items-center border-b border-gray20">
         <div className="w-[72px]"></div>
         <div className="font-medium leading-8 text-xl text-tnBlack">리뷰</div>
         <button
-          onClick={() => navigate(`/toilet/${toiletId}/comment`)}
+          onClick={writeCommentHandler}
           className="h-9 w-[72px] bg-tnBlueLight rounded text-tnBlack font-medium text-sm leading-[14px]"
         >
           글쓰기
         </button>
       </div>
-      {commentList.map((comment: IComment) => {
+
+      {[...commentList].slice(0, 3).map((comment: IComment) => {
         return (
           <Comment
             key={comment.id}
@@ -43,12 +64,54 @@ const Comments = () => {
             content={comment.content}
             nickname={comment.nickname}
             rating={comment.rating}
+            createdAt={comment.createdAt}
             deleteState={deleteState}
             setDeleteState={setDeleteState}
           />
         );
       })}
-    </>
+
+      {showMore &&
+        [...commentList]
+          .slice(3, commentList.length)
+          .map((comment: IComment) => {
+            return (
+              <Comment
+                key={comment.id}
+                commentId={comment.id}
+                toiletId={comment.toiletId}
+                userId={comment.userId}
+                content={comment.content}
+                nickname={comment.nickname}
+                rating={comment.rating}
+                createdAt={comment.createdAt}
+                deleteState={deleteState}
+                setDeleteState={setDeleteState}
+              />
+            );
+          })}
+
+      {commentList.length ? null : <div>아직 댓글이 없어요</div>}
+      {commentList.length > 3 && (
+        <div
+          onClick={() => setShowMore(!showMore)}
+          className="flex justify-center py-2 cursor-pointer"
+        >
+          <div className="text-tnBlack font-normal text-base leading-[26px]">
+            {showMore ? "접기" : "더보기"}
+          </div>
+          <img
+            className="w-6 h-6"
+            src={
+              showMore
+                ? "/images/toilet/close-arrow.svg"
+                : "/images/toilet/open-arrow.svg"
+            }
+            alt="comment-open-arrow"
+          />
+        </div>
+      )}
+    </div>
   );
 };
 

@@ -16,6 +16,7 @@ module.exports = {
         gray40: "#A7A7A7",
         gray60: "#7A7A7A",
         gray80: "#404040",
+        overlay: "rgba(34,34,34,0.45)",
       },
       boxShadow: {
         search: "0px 1px 5px rgba(107, 107, 107, 0.1);",

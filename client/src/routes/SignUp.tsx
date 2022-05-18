@@ -80,7 +80,7 @@ const SignUp = () => {
                 setSignupErrorMessage("");
               }}
               className="cursor-pointer absolute right-3 top-3.5 z-10"
-              src="/images/delete.svg"
+              src="/images/common/delete.svg"
               alt="clear-button"
             />
           ) : null}

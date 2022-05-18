@@ -19,6 +19,7 @@ const Modal = ({
 }: ModalProps) => {
   return (
     <>
+      <div className="bg-overlay top-0 absolute w-full h-[100vh]"></div>
       <div className="absolute top-[300px] w-full flex justify-center h-[128px] px-[37px]">
         <div className="w-full bg-white z-[60] rounded-[10px] shadow-2xl">
           <div className="py-[25px] text-center text-tnBlack font-bold text-base leading-6 border-b border-[#C4C4C4]">
@@ -39,7 +40,7 @@ const Modal = ({
             <div className="flex">
               <div
                 onClick={() => setModal(false)}
-                className="flex-1 bg-white rounded-bl-[10px]  py-4 text-center text-tnBlack border-r border-[#C4C4C4]"
+                className="flex-1 bg-white rounded-bl-[10px] py-4 text-center text-tnBlack border-r border-[#C4C4C4]"
               >
                 {left}
               </div>

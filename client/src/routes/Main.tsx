@@ -205,6 +205,10 @@ const Main = () => {
                     setToiletInfo(position);
                     commentRequest(position.id);
                   }}
+                  image={{
+                    src: "/images/main/marker-icon.png",
+                    size: { width: 24, height: 32 },
+                  }}
                 />
               ))}
             </MarkerClusterer>
@@ -216,7 +220,6 @@ const Main = () => {
               image={{
                 src: "/images/main/current-marker.png",
                 size: { width: 48, height: 57.78 },
-                options: { className: "animate-spin" },
               }}
             />
           )}

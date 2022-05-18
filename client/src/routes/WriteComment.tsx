@@ -1,10 +1,12 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
+import DrawerHeader from "../components/DrawerHeader";
 import { customAxios } from "../lib/customAxios";
 
 const WriteComment = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const ref = useRef<HTMLTextAreaElement | null>(null);
   const queryString: string = location.search;
   const commentId: string = queryString.split("=")[1];
   const { toiletId } = useParams();
@@ -47,65 +49,85 @@ const WriteComment = () => {
 
   return (
     <>
-      <div className="pt-10">
-        <div className="relative mx-auto flex w-fit items-center justify-center gap-x-1 py-4">
-          <input
-            className="bg-red-500 absolute top-0 right-0 h-full w-full cursor-pointer py-0 opacity-0"
-            type="range"
-            step="0.5"
-            min="0"
-            max="5"
-            onChange={(e) => setRating(Number(e.target.value))}
-          />
-          <div className="py-4 flex space-x-1 items-center">
-            {Array(numberOfFilled)
-              .fill(1)
-              .map((_, i) => (
-                <div key={i}>
-                  <img
-                    className="w-6 h-6"
-                    src="/images/star/star-filled.svg"
-                    alt="filled"
-                  />
-                </div>
-              ))}
-            {Array(numberOfHalfFilled)
-              .fill(1)
-              .map((_, i) => (
-                <div key={i}>
-                  <img
-                    className="w-[27.8px] h-[27.8px]"
-                    src="/images/star/star-half-filled.svg"
-                    alt="half"
-                  />
-                </div>
-              ))}
-            {Array(numberOfNonFilled)
-              .fill(1)
-              .map((_, i) => (
-                <div key={i}>
-                  <img
-                    className="w-6 h-6"
-                    src="/images/star/star-non-filled.svg"
-                    alt="non"
-                  />
-                </div>
-              ))}
+      <DrawerHeader title="리뷰" isAdmin={false} action={postComment} />
+      <div>
+        <div className="flex items-center">
+          <div className="mr-4 pl-4">별점</div>
+          <div className="relative flex w-fit items-center justify-center gap-x-1">
+            <input
+              className="bg-red-500 absolute top-0 right-0 h-full w-full cursor-pointer py-0 opacity-0"
+              type="range"
+              step="0.5"
+              min="0"
+              max="5"
+              onChange={(e) => setRating(Number(e.target.value))}
+            />
+            <div className="flex items-center">
+              <div className="py-4 flex space-x-1 items-center">
+                {Array(numberOfFilled)
+                  .fill(1)
+                  .map((_, i) => (
+                    <div key={i}>
+                      <img
+                        className="w-6 h-6"
+                        src="/images/star/star-filled-blue.svg"
+                        alt="filled"
+                      />
+                    </div>
+                  ))}
+                {Array(numberOfHalfFilled)
+                  .fill(1)
+                  .map((_, i) => (
+                    <div key={i}>
+                      <img
+                        className="w-6 h-6"
+                        src="/images/star/star-half-blue.svg"
+                        alt="half"
+                      />
+                    </div>
+                  ))}
+                {Array(numberOfNonFilled)
+                  .fill(1)
+                  .map((_, i) => (
+                    <div key={i}>
+                      <img
+                        className="w-6 h-6"
+                        src="/images/star/star-non-blue.svg"
+                        alt="non"
+                      />
+                    </div>
+                  ))}
+              </div>
+            </div>
           </div>
         </div>
-        <div>댓글작성</div>
-        <input
-          onChange={(e) => setRating(Number(e.currentTarget.value))}
-          value={rating}
-          type="text"
-        />
-        <input
-          onChange={(e) => setContent(e.currentTarget.value)}
-          value={content}
-          className="w-full h-10 bg-tnBlue"
-          type="text"
-        />
-        <button
+        <div className="h-[1px] bg-[#F6F6F6] mb-4"></div>
+
+        <div className="px-5 relative">
+          <textarea
+            ref={ref}
+            autoComplete="off"
+            onChange={(e) => setContent(e.currentTarget.value)}
+            value={content}
+            className="w-full h-[500px] resize-none outline-none cursor-pointer py-[6px] text-base text-tnBlack font-normal"
+          />
+
+          {content.length ? null : (
+            <div
+              onClick={() => ref.current?.focus()}
+              className="absolute top-[6px] text-gray20 font-normal text-base leading-[26px]"
+            >
+              <div>화장실에 대한 의견을 자유롭게 남겨 주세요.</div>
+
+              <div className="pl-[6px]">
+                <li>타인에 대한 비방, 욕설은 금지합니다.</li>
+                <li>광고나 불법자료에 대한 내용은 금지합니다.</li>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* <button
           className="mr-10"
           onClick={() => navigate(`/toilet/${toiletId}`, { replace: true })}
         >
@@ -113,7 +135,7 @@ const WriteComment = () => {
         </button>
         <button className="mr-10" onClick={postComment}>
           확인
-        </button>
+        </button> */}
       </div>
     </>
   );

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { customAxios } from "../lib/customAxios";
 
@@ -9,8 +9,9 @@ interface CommentProps {
   userId: number;
   toiletId: number;
   commentId: number;
-  setDeleteState: any;
+  setDeleteState: Dispatch<SetStateAction<boolean>>;
   deleteState: boolean;
+  createdAt: string;
 }
 
 const Comment = ({
@@ -22,6 +23,7 @@ const Comment = ({
   commentId,
   setDeleteState,
   deleteState,
+  createdAt,
 }: CommentProps) => {
   const [isMine, setIsMine] = useState(false);
   const navigate = useNavigate();
@@ -43,9 +45,12 @@ const Comment = ({
 
   return (
     <div className="px-5 py-4 border-b border-gray20">
-      <div>
+      <div className="flex justify-between">
         <div className="font-medium text-tnBlack text-base leading-[26px]">
           {nickname}
+        </div>
+        <div className="text-gray60 font-normal text-sm leading-[22px]">
+          {createdAt.split("T")[0]}
         </div>
       </div>
       <div className="py-4 flex space-x-1 items-center">
@@ -76,19 +81,6 @@ const Comment = ({
         {content}
       </div>
 
-      {/* <div className="pl-5 pr-[14px] pt-3 pb-[15px]">
-        <div className="flex justify-between items-center mb-6">
-          <div className="font-medium text-tnBlack text-base leading-[26px]">
-            {nickname}
-          </div>
-          <div className="font-medium text-tnBlack text-sm leading-5">
-            {rating.toFixed(1)} *****
-          </div>
-        </div>
-        <div className="font-medium text-tnBlack text-base leading-[26px]">
-          {content}
-        </div>
-      </div> */}
       {isMine && (
         <div className="flex space-x-4">
           <div

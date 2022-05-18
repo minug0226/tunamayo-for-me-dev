@@ -12,7 +12,7 @@ const DrawerHeader = ({ title, isAdmin, action }: DrawerHeaderProps) => {
     <>
       <div className="flex py-[15px] px-5 items-center justify-between border-b border-gray20">
         <img
-          className="w-6 h-6"
+          className="w-6 h-6 cursor-pointer"
           src="/images/common/back-icon.svg"
           alt="back-icon"
           onClick={() => navigate(-1)}
