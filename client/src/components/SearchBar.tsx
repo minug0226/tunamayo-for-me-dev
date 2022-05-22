@@ -70,6 +70,13 @@ const SearchBar = ({ positions, setCenter }: SearchBarProps) => {
                 />
               ) : null}
             </div>
+            <div className="bg-white px-[87px] pt-[60px] ">
+              <img
+                className="w-12 h-12"
+                src="/images/main/search-phrase.svg"
+                alt="search-pharse"
+              />
+            </div>
           </div>
 
           <div className="pl-2 space-y-4 bg-white h-full">
