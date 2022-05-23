@@ -3,11 +3,34 @@ import { useNavigate } from "react-router-dom";
 interface DrawerHeaderProps {
   title: string;
   isAdmin: boolean;
+  reportTitle?: string;
+  reportContent?: string;
+  content?: string;
+  rightNone?: boolean;
   action?: () => void;
 }
 
-const DrawerHeader = ({ title, isAdmin, action }: DrawerHeaderProps) => {
+const DrawerHeader = ({
+  title,
+  isAdmin,
+  reportTitle,
+  reportContent,
+  content,
+  rightNone,
+  action,
+}: DrawerHeaderProps) => {
   const navigate = useNavigate();
+
+  const isDisabled = () => {
+    if (title === "화장실 제보하기" || title === "1:1 문의하기") {
+      if (!reportTitle?.length || !reportContent?.length) return true;
+      else return false;
+    } else if (title === "리뷰") {
+      if (!content?.length) return true;
+      else return false;
+    }
+  };
+
   return (
     <>
       <div className="flex py-[15px] px-5 items-center justify-between border-b border-gray20">
@@ -21,12 +44,17 @@ const DrawerHeader = ({ title, isAdmin, action }: DrawerHeaderProps) => {
         {isAdmin ? (
           <div className="text-transparent">완료</div>
         ) : (
-          <div
+          <button
             onClick={action}
-            className="text-gray20 font-normal text-base leading-[26px]"
+            disabled={isDisabled()}
+            className={
+              rightNone
+                ? "text-transparent"
+                : "disabled:text-gray20 disabled:font-normal text-base leading-[26px] text-tnBlue"
+            }
           >
             완료
-          </div>
+          </button>
         )}
       </div>
     </>

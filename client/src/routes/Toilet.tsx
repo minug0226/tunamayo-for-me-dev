@@ -4,8 +4,10 @@ import ToiletInfo from "../components/ToiletInfo";
 const Toilet = () => {
   return (
     <>
-      <ToiletInfo />
-      <Comments />
+      <div className="relative">
+        <ToiletInfo />
+        <Comments />
+      </div>
     </>
   );
 };

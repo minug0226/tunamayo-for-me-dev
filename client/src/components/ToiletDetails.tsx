@@ -26,7 +26,7 @@ const ToiletDetails = ({ toilet }: ToiletDetailsProps) => {
         ></img>
       </div>
       {dropdown ? (
-        <div className="origin-top animate-dropdown transition-all duration-300 pt-3 pl-5 pb-[42px] pr-[25px] bg-[#F6F6F6] text-tnBlack font-normal text-base leading-[26px]">
+        <div className="origin-center animate-dropdown pt-3 pl-5 pb-[42px] pr-[25px] bg-[#F6F6F6] text-tnBlack font-normal text-base leading-[26px]">
           <div className="flex">
             <div className="mr-11 text-transparent">남성용</div>
             <div className="flex-1 text-base font-normal text-gray60">

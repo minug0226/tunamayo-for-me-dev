@@ -17,6 +17,12 @@ const Modal = ({
   left,
   right,
 }: ModalProps) => {
+  const rightClass = () => {
+    if (right === "탈퇴하기" || right === "삭제")
+      return "cursor-pointer flex-1 bg-white rounded-br-[10px] text-tnRed py-4 text-center font-semibold";
+    else
+      return "cursor-pointer flex-1 bg-white rounded-br-[10px] text-tnBlue py-4 text-center font-semibold";
+  };
   return (
     <>
       <div className="bg-overlay top-0 absolute w-full h-[100vh]"></div>
@@ -32,7 +38,7 @@ const Modal = ({
                 setModal(false);
                 action && action();
               }}
-              className="flex py-[13px] justify-center items-center font-semibold text-tnBlue"
+              className="cursor-pointer flex py-[13px] justify-center items-center font-semibold text-tnBlue"
             >
               {oneButton}
             </div>
@@ -40,7 +46,7 @@ const Modal = ({
             <div className="flex">
               <div
                 onClick={() => setModal(false)}
-                className="flex-1 bg-white rounded-bl-[10px] py-4 text-center text-tnBlack border-r border-[#C4C4C4]"
+                className="cursor-pointer flex-1 bg-white rounded-bl-[10px] py-4 text-center text-tnBlack border-r border-[#C4C4C4]"
               >
                 {left}
               </div>
@@ -49,7 +55,7 @@ const Modal = ({
                 onClick={() => {
                   action ? action() : setModal(false);
                 }}
-                className="flex-1 bg-white rounded-br-[10px] text-tnBlue py-4 text-center font-semibold"
+                className={rightClass()}
               >
                 {right}
               </div>

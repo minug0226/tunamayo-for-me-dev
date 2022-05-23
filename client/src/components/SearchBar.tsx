@@ -12,11 +12,11 @@ interface ToiletPosition {
 }
 
 interface SearchBarProps {
-  positions: ToiletPosition[];
+  data?: ToiletPosition[];
   setCenter: any;
 }
 
-const SearchBar = ({ positions, setCenter }: SearchBarProps) => {
+const SearchBar = ({ data, setCenter }: SearchBarProps) => {
   const [matchingList, setMatchingList] = useState<ToiletPosition[]>([]);
   const [keyword, setKeyword] = useState("");
   const [searchOverlay, setSearchOverlay] = useState<boolean>(false);
@@ -26,8 +26,8 @@ const SearchBar = ({ positions, setCenter }: SearchBarProps) => {
   };
 
   useEffect(() => {
-    if (keyword.length) {
-      const filteredToilet = [...positions].filter((toilet) => {
+    if (keyword.length && data) {
+      const filteredToilet = [...data].filter((toilet) => {
         return (
           toilet.roadName.includes(keyword) || toilet.title.includes(keyword)
         );
@@ -70,46 +70,51 @@ const SearchBar = ({ positions, setCenter }: SearchBarProps) => {
                 />
               ) : null}
             </div>
-            <div className="bg-white px-[87px] pt-[60px] ">
-              <img
-                className="w-12 h-12"
-                src="/images/main/search-phrase.svg"
-                alt="search-pharse"
-              />
-            </div>
           </div>
 
           <div className="pl-2 space-y-4 bg-white h-full">
-            {matchingList.length
-              ? matchingList.map((toilet, i) => {
-                  return (
-                    <div
-                      key={i}
-                      onClick={() => {
-                        setCenter({ center: toilet.latlng, isAllow: false });
-                        setKeyword(toilet.title);
-                        setSearchOverlay(false);
-                        setMatchingList([]);
-                      }}
-                      className="flex items-center"
-                    >
-                      <img
-                        className="mr-4"
-                        src="/images/main/search-icon-gray.svg"
-                        alt=""
-                      />
-                      <div>
-                        <div className="font-normal text-base leading-[26px] text-tnBlack">
-                          {toilet.title}
-                        </div>
-                        <div className="font-normal text-sm text-gray40">
-                          {toilet.roadName}
-                        </div>
+            {matchingList.length ? (
+              matchingList.map((toilet, i) => {
+                return (
+                  <div
+                    key={i}
+                    onClick={() => {
+                      setCenter({ center: toilet.latlng, isAllow: false });
+                      setKeyword(toilet.title);
+                      setSearchOverlay(false);
+                      setMatchingList([]);
+                    }}
+                    className="flex items-center"
+                  >
+                    <img
+                      className="mr-4"
+                      src="/images/main/search-icon-gray.svg"
+                      alt=""
+                    />
+                    <div>
+                      <div className="font-normal text-base leading-[26px] text-tnBlack">
+                        {toilet.title}
+                      </div>
+                      <div className="font-normal text-sm text-gray40">
+                        {toilet.roadName}
                       </div>
                     </div>
-                  );
-                })
-              : null}
+                  </div>
+                );
+              })
+            ) : (
+              <div className="flex flex-col items-center pt-[60px]">
+                <img
+                  className="w-12 h-12"
+                  src="images/common/search-bar.svg"
+                  alt="search-bar"
+                />
+                <div className="flex flex-col items-center font-normal text-base leading-[26px] text-gray40">
+                  <div>근처 지하철명이나 건물, 주소</div>
+                  <div>등으로 검색해 보세요!</div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       ) : (

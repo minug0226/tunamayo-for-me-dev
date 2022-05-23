@@ -1,5 +1,6 @@
 import { Map, MapMarker, MarkerClusterer } from "react-kakao-maps-sdk";
 import { useEffect, useState } from "react";
+import { useQuery } from "react-query";
 import ModalPopUp from "../components/ModalPopUp";
 import { customAxios } from "../lib/customAxios";
 import {
@@ -14,12 +15,25 @@ import NavButton from "../components/NavButton";
 import Drawer from "../components/Drawer";
 import Modal from "../components/Modal";
 import { useNavigate } from "react-router-dom";
-import CurrentLocationLoading from "../components/CurrentLocationLoading";
+import Loading from "../components/Loading";
+import { getAllToilets } from "../api";
+
+interface ToiletList {
+  id: number;
+  title: string;
+  latlng: Latlng;
+  roadName: string;
+}
+
+interface Latlng {
+  lat: number;
+  lng: number;
+}
 
 const Main = () => {
   const navigate = useNavigate();
   const [userInfo, setUserInfo] = useState<IUser | null>(null);
-  const [positions, setPositions] = useState<any[]>([]);
+  // const [positions, setPositions] = useState<any[]>([]);
   const [center, setCenter] = useState({
     center: {
       lat: 37.5697,
@@ -28,9 +42,7 @@ const Main = () => {
     isAllow: false,
   });
 
-  const [currentLocationClick, setCurrentLocationClick] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-
+  const [loading, setLoading] = useState(true);
   const [modalPopUp, setModalPopUp] = useState(false);
   const [modal, setModal] = useState(false);
   const [create, setCreate] = useState(false);
@@ -77,21 +89,10 @@ const Main = () => {
     else setCommentInfo({ length, avg });
   };
 
-  // 5,000개의 데이터 저장. --> 전체 positions
-  useEffect(() => {
-    customAxios.get(`/toilets`).then((res) => {
-      const { toiletList } = res.data;
-      const newData = toiletList.map((el: any) => {
-        return {
-          id: el.id,
-          title: el.toiletName,
-          latlng: { lat: el.latitude, lng: el.longitude },
-          roadName: el.roadName,
-        };
-      });
-      setPositions(newData);
-    });
-  }, []);
+  const { isLoading, data } = useQuery<ToiletList[]>(
+    "allToilets",
+    getAllToilets
+  );
 
   useEffect(() => {
     customAxios.get("/users").then((res) => setUserInfo(res.data.userInfo));
@@ -110,17 +111,17 @@ const Main = () => {
             },
             isAllow: true,
           }));
-          setIsLoading(false);
+          setLoading(false);
         },
         (err) => {
-          setIsLoading(false);
+          setLoading(false);
           console.log(err);
         }
       );
     }
     // 사용자가 위치 동의 허용을 하지 않았을 때
     else {
-      setIsLoading(false);
+      setLoading(false);
     }
   }, []);
 
@@ -140,20 +141,22 @@ const Main = () => {
   // currentArea의 sw 위도 보다 크고, ne 위도 보다 작고, sw 경도보다 크고, ne 경도보다 작은 포지션 포함된 범위.
   // currentPositions에 그 범위를 담는다.
   const includePositions = () => {
-    const newPositions = [...positions].filter((m) => {
-      return (
-        m.latlng.lat >= currentArea.sw.lat &&
-        m.latlng.lat < currentArea.ne.lat &&
-        m.latlng.lng >= currentArea.sw.lng &&
-        m.latlng.lng < currentArea.ne.lng
-      );
-    });
-    setCurrentPositions(newPositions);
+    if (data) {
+      const newPositions = [...data].filter((m) => {
+        return (
+          m.latlng.lat >= currentArea.sw.lat &&
+          m.latlng.lat < currentArea.ne.lat &&
+          m.latlng.lng >= currentArea.sw.lng &&
+          m.latlng.lng < currentArea.ne.lng
+        );
+      });
+      setCurrentPositions(newPositions);
+    }
   };
 
   useEffect(() => {
     includePositions();
-  }, [currentArea, positions, center]);
+  }, [currentArea, data, center]);
 
   return (
     <>
@@ -185,11 +188,11 @@ const Main = () => {
             setModalPopUp(false);
           }}
         >
-          <SearchBar positions={positions} setCenter={setCenter} />
+          <SearchBar data={data} setCenter={setCenter} />
           <NavButton setDrawer={setDrawer} />
           <CurrentLocationButton setCenter={setCenter} />
           {isLoading ? (
-            <CurrentLocationLoading />
+            <Loading content="현재 위치 불러 오는 중" />
           ) : (
             <MarkerClusterer
               averageCenter={true} // 클러스터에 포함된 마커들의 평균 위치를 클러스터 마커 위치로 설정

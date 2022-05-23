@@ -1,5 +1,5 @@
 import DrawerHeader from "../components/DrawerHeader";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { useState } from "react";
 import { customAxios } from "../lib/customAxios";
 import Modal from "../components/Modal";
@@ -30,7 +30,7 @@ const EditProfile = () => {
   };
 
   return (
-    <>
+    <div className="relative">
       <DrawerHeader
         title="프로필수정"
         isAdmin={false}
@@ -55,7 +55,7 @@ const EditProfile = () => {
       {modal && (
         <Modal setModal={setModal} title={modalTitle} oneButton="확인" />
       )}
-    </>
+    </div>
   );
 };
 

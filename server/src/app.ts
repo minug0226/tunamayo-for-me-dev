@@ -22,8 +22,11 @@ app.use(
       "http://localhost:3000",
       "http://localhost:8080",
       "http://localhost:3000/",
+      "https://tunamayo-toilet.com",
+      "https://www.tunamayo-toilet.com",
     ],
     credentials: true,
+    methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
   })
 );
 

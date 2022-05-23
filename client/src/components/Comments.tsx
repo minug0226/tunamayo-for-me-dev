@@ -91,7 +91,19 @@ const Comments = () => {
             );
           })}
 
-      {commentList.length ? null : <div>아직 댓글이 없어요</div>}
+      {commentList.length ? null : (
+        <div className="flex flex-col items-center pt-20">
+          <img
+            className="mb-1 w-12 h-12"
+            src="/images/toilet/no-review-icon.svg"
+            alt="no-reveiw-icon"
+          />
+          <div className="flex flex-col items-center font-normal text-base leadin-[26px] text-gray40">
+            <div>아직 리뷰가 없어요.</div>
+            <div>첫 번째 리뷰를 남겨주세요!</div>
+          </div>
+        </div>
+      )}
       {commentList.length > 3 && (
         <div
           onClick={() => setShowMore(!showMore)}

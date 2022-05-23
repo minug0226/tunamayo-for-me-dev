@@ -49,7 +49,12 @@ const WriteComment = () => {
 
   return (
     <>
-      <DrawerHeader title="리뷰" isAdmin={false} action={postComment} />
+      <DrawerHeader
+        title="리뷰"
+        isAdmin={false}
+        action={postComment}
+        content={content}
+      />
       <div>
         <div className="flex items-center">
           <div className="mr-4 pl-4">별점</div>
@@ -126,16 +131,6 @@ const WriteComment = () => {
             </div>
           )}
         </div>
-
-        {/* <button
-          className="mr-10"
-          onClick={() => navigate(`/toilet/${toiletId}`, { replace: true })}
-        >
-          취소
-        </button>
-        <button className="mr-10" onClick={postComment}>
-          확인
-        </button> */}
       </div>
     </>
   );

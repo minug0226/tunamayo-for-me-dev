@@ -9,7 +9,7 @@ const NavButton = ({ setDrawer }: NavProps) => {
     <>
       <div
         onClick={() => setDrawer(true)}
-        className="w-11 h-11 rounded-full shadow-navButton absolute top-[75px] left-[21px] bg-white flex items-center justify-center"
+        className="cursor-pointer w-11 h-11 rounded-full shadow-navButton absolute top-[75px] left-[21px] bg-white flex items-center justify-center"
       >
         <img
           className="w-[18px] h-4"

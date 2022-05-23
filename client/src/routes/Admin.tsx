@@ -6,12 +6,12 @@ import { customAxios } from "../lib/customAxios";
 
 const Admin = () => {
   const navigate = useNavigate();
-  const [modal, setModal] = useState<boolean>(true);
+  const [modal, setModal] = useState<boolean>(false);
 
   useEffect(() => {
     customAxios.get("/users").then((res) => {
-      if (res.data.userInfo.isAdmin) {
-        setModal(false);
+      if (!res.data.userInfo.isAdmin) {
+        setModal(true);
       }
     });
   }, []);
@@ -33,13 +33,13 @@ const Admin = () => {
           <>
             <div
               onClick={() => navigate("/admin/reports?type=report")}
-              className="py-9 text-center border-b border-gray20 text-base font-normal leading-[26px] text-tnBlack"
+              className="cursor-pointer py-9 text-center border-b border-gray20 text-base font-normal leading-[26px] text-tnBlack"
             >
               제보 리스트
             </div>
             <div
               onClick={() => navigate("/admin/reports?type=inquiry")}
-              className="py-9 text-center border-b border-gray20 text-base font-normal leading-[26px] text-tnBlack"
+              className="cursor-pointer py-9 text-center border-b border-gray20 text-base font-normal leading-[26px] text-tnBlack"
             >
               문의 리스트
             </div>

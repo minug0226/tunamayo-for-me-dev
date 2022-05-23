@@ -3,6 +3,9 @@ import { PropsType } from "../lib/interfaces";
 
 const ModalPopUp = ({ toiletInfo, commentInfo, modalPopUp }: PropsType) => {
   const navigate = useNavigate();
+  const numberOfFilled = Math.floor(commentInfo.avg); // 꽉별 개수
+  const numberOfHalfFilled = commentInfo.avg % 1 === 0 ? 0 : 1; // 반별 개수
+  const numberOfNonFilled = 5 - (numberOfFilled + numberOfHalfFilled); // 빈별 개수
 
   const modalClass = (modalPopUp: boolean) => {
     if (modalPopUp)
@@ -25,15 +28,40 @@ const ModalPopUp = ({ toiletInfo, commentInfo, modalPopUp }: PropsType) => {
             <div className="font-normal text-sm leading-5 text-gray80">
               {commentInfo.avg}
             </div>
-            <div className="flex space-x-1">
-              {[1, 2, 3, 4, 5].map((star, i) => (
-                <img
-                  key={i}
-                  className="w-[15px] h-[15px]"
-                  src="/images/main/star-full.svg"
-                  alt=""
-                />
-              ))}
+            <div className="flex space-x-1 items-center">
+              {Array(numberOfFilled)
+                .fill(1)
+                .map((_, i) => (
+                  <div key={i}>
+                    <img
+                      className="w-[15px] h-[15px]"
+                      src="/images/star/star-filled-black.svg"
+                      alt="filled"
+                    />
+                  </div>
+                ))}
+              {Array(numberOfHalfFilled)
+                .fill(1)
+                .map((_, i) => (
+                  <div key={i}>
+                    <img
+                      className="w-[15px] h-[15px]"
+                      src="/images/star/star-half-black.svg"
+                      alt="half"
+                    />
+                  </div>
+                ))}
+              {Array(numberOfNonFilled)
+                .fill(1)
+                .map((_, i) => (
+                  <div key={i}>
+                    <img
+                      className="w-[15px] h-[15px]"
+                      src="/images/star/star-non-blue.svg"
+                      alt="non"
+                    />
+                  </div>
+                ))}
             </div>
             <div className="font-normal text-sm leading-5 text-gray80">
               ({commentInfo.length})

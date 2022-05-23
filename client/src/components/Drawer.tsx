@@ -47,15 +47,15 @@ const Drawer = ({ drawer, drawerClose, userInfo, setModal }: DrawerProps) => {
 
       {drawer ? (
         <div className={drawerClass()}>
-          <div className="flex items-center justify-between mb-[55px]">
-            <div
-              onClick={() => {
-                userInfo
-                  ? navigate(`/profile?nickname=${userInfo.nickname}`)
-                  : navigate("/login");
-              }}
-              className="flex items-center"
-            >
+          <div
+            onClick={() => {
+              userInfo
+                ? navigate(`/profile?nickname=${userInfo.nickname}`)
+                : navigate("/login");
+            }}
+            className="flex items-center justify-between mb-[55px] cursor-pointer"
+          >
+            <div className="flex items-center cursor-pointer">
               <div className="rounded-full mr-2 w-11 h-11 bg-[#FEFEFE] shadow-search flex items-center justify-center">
                 <img src="/images/main/profile-icon.svg" alt="profile-icon" />
               </div>
@@ -68,6 +68,7 @@ const Drawer = ({ drawer, drawerClose, userInfo, setModal }: DrawerProps) => {
 
           <div className="flex-1 pl-2 font-normal text-base leading-[26px] text-tnBlack space-y-[60px]">
             <div
+              className="cursor-pointer"
               onClick={() => {
                 userInfo ? navigate("/my/comments") : setModal(true);
               }}
@@ -75,6 +76,7 @@ const Drawer = ({ drawer, drawerClose, userInfo, setModal }: DrawerProps) => {
               내가 쓴 댓글
             </div>
             <div
+              className="cursor-pointer"
               onClick={() => {
                 userInfo ? navigate("/report?type=report") : setModal(true);
               }}
@@ -82,15 +84,17 @@ const Drawer = ({ drawer, drawerClose, userInfo, setModal }: DrawerProps) => {
               화장실 제보하기
             </div>
             <div
+              className="cursor-pointer"
               onClick={() => {
                 userInfo ? navigate("/report?type=inquiry") : setModal(true);
               }}
             >
               1:1 문의
             </div>
-            <div>버전정보</div>
+            <div className="cursor-pointer">버전정보</div>
             {userInfo?.isAdmin ? (
               <div
+                className="cursor-pointer"
                 onClick={() => {
                   navigate("/admin");
                 }}
@@ -103,7 +107,7 @@ const Drawer = ({ drawer, drawerClose, userInfo, setModal }: DrawerProps) => {
             onClick={() => {
               userInfo ? setLogoutModal(true) : navigate("/login");
             }}
-            className="text-gray40 text-center font-normal text-base leading-[26px] w-full"
+            className="text-gray40 text-center font-normal text-base leading-[26px] w-full cursor-pointer"
           >
             {userInfo ? "로그아웃" : "로그인"}
           </div>

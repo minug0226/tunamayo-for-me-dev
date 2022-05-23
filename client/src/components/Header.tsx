@@ -17,8 +17,15 @@ const Header = ({ toilet }: HeaderProps) => {
           onClick={() => navigate(-1)}
         />
         <div className="flex flex-col items-center">
-          <div className="py-1 font-medium text-xl leading-8 text-tnBlack">
-            {toilet?.toiletName}
+          <div className="py-1 font-medium text-xl leading-8 text-tnBlack break-words text-center">
+            {toilet?.toiletName.includes("(") ? (
+              <div>
+                <div>{toilet?.toiletName.split("(")[0]}</div>
+                <div>({toilet?.toiletName.split("(")[1]}</div>
+              </div>
+            ) : (
+              <div> {toilet?.toiletName}</div>
+            )}
           </div>
           <div className="py-1 text-sm text-gray80">{toilet?.roadName}</div>
         </div>

@@ -142,11 +142,11 @@ const userController = {
           "Set-Cookie",
           `token=${tunaToken}; Path=/; Max-age=${maxAge};`
         );
-        return res.redirect("http://localhost:3000");
+        return res.redirect("https://tunamayo-toilet.com");
       }
       // CASE2) 처음 가입하는 유저인 경우 -> 클라이언트의 가입 페이지로 리다이렉트 시켜줌.
       return res.redirect(
-        `http://localhost:3000/signup?oauthprovider=kakao&oauthid=${kakaoOauthId}&email=${kakaoUserEmail}`
+        `https://tunamayo-toilet.com/signup?oauthprovider=kakao&oauthid=${kakaoOauthId}&email=${kakaoUserEmail}`
       );
     } catch (err) {
       console.log(err);
@@ -213,11 +213,11 @@ const userController = {
           "Set-Cookie",
           `token=${tunaToken}; Path=/; Max-age=${maxAge};`
         );
-        return res.redirect("http://localhost:3000");
+        return res.redirect("https://tunamayo-toilet.com");
       }
       // CASE2) 처음 가입하는 유저인 경우 -> 클라이언트의 가입 페이지로 리다이렉트 시켜줌.
       return res.redirect(
-        `http://localhost:3000/signup?oauthprovider=google&oauthid=${googleOauthId}&email=${googleUserEmail}`
+        `https://tunamayo-toilet.com/signup?oauthprovider=google&oauthid=${googleOauthId}&email=${googleUserEmail}`
       );
     } catch (err) {
       console.log(err);

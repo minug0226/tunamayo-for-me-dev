@@ -3,6 +3,7 @@ import React, { useState, useRef } from "react";
 import { customAxios } from "../lib/customAxios";
 import DrawerHeader from "../components/DrawerHeader";
 import Modal from "../components/Modal";
+import Loading from "../components/Loading";
 
 const WriteReport = () => {
   const ref = useRef<HTMLTextAreaElement | null>(null);
@@ -14,8 +15,10 @@ const WriteReport = () => {
   const [reportTitle, setReportTitle] = useState("");
   const [reportContent, setReportContent] = useState("");
   const [modal, setModal] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const postReport = async () => {
+    setLoading(true);
     await customAxios
       .post("/reports", {
         reportTitle,
@@ -24,6 +27,7 @@ const WriteReport = () => {
       })
       .then((res) => {
         if (res.status === 201) {
+          setLoading(false);
           setModal(true);
         }
       });
@@ -31,10 +35,17 @@ const WriteReport = () => {
 
   return (
     <>
+      {loading ? (
+        <Loading
+          content={reportType === "report" ? "화장실 제보하기" : "1:1 문의하기"}
+        />
+      ) : null}
       <DrawerHeader
         title={reportType === "report" ? "화장실 제보하기" : "1:1 문의하기"}
         isAdmin={false}
         action={postReport}
+        reportTitle={reportTitle}
+        reportContent={reportContent}
       />
       <div className="relative">
         <input
@@ -49,7 +60,7 @@ const WriteReport = () => {
           ref={ref}
           value={reportContent}
           onChange={(e) => setReportContent(e.target.value)}
-          className=" w-full px-5 pt-4 outline-none no-scrollbar resize-none text-tnBlack"
+          className="min-h-[500px] w-full px-5 pt-4 outline-none no-scrollbar resize-none text-tnBlack"
         />
         {reportContent.length ? null : (
           <div
@@ -66,19 +77,19 @@ const WriteReport = () => {
             )}
           </div>
         )}
-        {modal && (
-          <Modal
-            setModal={setModal}
-            title={
-              reportType === "report"
-                ? "제보 접수가 완료되었습니다!"
-                : "문의 접수가 완료되었습니다!"
-            }
-            oneButton="확인"
-            action={() => navigate("/", { replace: true })}
-          />
-        )}
       </div>
+      {modal && (
+        <Modal
+          setModal={setModal}
+          title={
+            reportType === "report"
+              ? "제보 접수가 완료되었습니다!"
+              : "문의 접수가 완료되었습니다!"
+          }
+          oneButton="확인"
+          action={() => navigate("/", { replace: true })}
+        />
+      )}
     </>
   );
 };
