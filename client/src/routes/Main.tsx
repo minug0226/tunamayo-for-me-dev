@@ -169,6 +169,7 @@ const Main = () => {
           center={center.center}
           className="w-full h-[100vh] z-0"
           level={2} // 지도의 확대 레벨
+          maxLevel={4}
           onCreate={(map) => {
             if (!create) {
               changeCurrentArea(map);

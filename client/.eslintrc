@@ -15,7 +15,8 @@
     "node_modules/",
     "postcss.config.js",
     ".prettierrc",
-    "tailwind.config.js"
+    "tailwind.config.js",
+    "public/pwabuilder-sw.js"
   ],
   "rules": {
     "prettier/prettier": "error",

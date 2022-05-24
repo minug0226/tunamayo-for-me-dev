@@ -7,7 +7,7 @@ import Modal from "../components/Modal";
 const EditProfile = () => {
   const location = useLocation();
   const queryString: string = location.search;
-  const nickname: string = queryString.split("=")[1];
+  const nickname: string = decodeURI(queryString.split("=")[1]);
   const [value, setValue] = useState(nickname);
   const [modal, setModal] = useState<boolean>(false);
   const [modalTitle, setModalTitle] = useState<string>("");
