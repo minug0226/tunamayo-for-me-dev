@@ -1,6 +1,6 @@
 import axios, { AxiosInstance } from "axios";
 
 export const customAxios: AxiosInstance = axios.create({
-  baseURL: `https://server.tunamayo-toilet.com`,
+  baseURL: `http://localhost:8080`,
   withCredentials: true,
 });

@@ -14,4 +14,6 @@ router.get("/kakao", users.kakaoLogin);
 router.get("/google", users.googleLogin);
 router.post("/logout", users.logout);
 
+router.delete("/", auth, users.signOut);
+
 export default router;
