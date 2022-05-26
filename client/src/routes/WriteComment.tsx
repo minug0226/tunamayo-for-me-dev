@@ -56,8 +56,8 @@ const WriteComment = () => {
         content={content}
       />
       <div>
-        <div className="flex items-center">
-          <div className="mr-4 pl-4">별점</div>
+        {/* 피터 수정 */}
+        <div className="flex flex-col items-center">
           <div className="relative flex w-fit items-center justify-center gap-x-1">
             <input
               className="bg-red-500 absolute top-0 right-0 h-full w-full cursor-pointer py-0 opacity-0"
@@ -68,13 +68,15 @@ const WriteComment = () => {
               onChange={(e) => setRating(Number(e.target.value))}
             />
             <div className="flex items-center">
-              <div className="py-4 flex space-x-1 items-center">
+              {/* 피터 수정 */}
+              <div className="pt-4 pb-1 flex items-center space-x-5">
                 {Array(numberOfFilled)
                   .fill(1)
                   .map((_, i) => (
                     <div key={i}>
                       <img
-                        className="w-6 h-6"
+                        // 피터 수정
+                        className="w-9 h-9"
                         src="/images/star/star-filled-blue.svg"
                         alt="filled"
                       />
@@ -85,7 +87,8 @@ const WriteComment = () => {
                   .map((_, i) => (
                     <div key={i}>
                       <img
-                        className="w-6 h-6"
+                        // 피터 수정
+                        className="w-9 h-9"
                         src="/images/star/star-half-blue.svg"
                         alt="half"
                       />
@@ -96,7 +99,8 @@ const WriteComment = () => {
                   .map((_, i) => (
                     <div key={i}>
                       <img
-                        className="w-6 h-6"
+                        // 피터 수정
+                        className="w-9 h-9"
                         src="/images/star/star-non-blue.svg"
                         alt="non"
                       />
@@ -106,8 +110,11 @@ const WriteComment = () => {
             </div>
           </div>
         </div>
+        {/* 피터 수정 */}
+        <div className="pt-1 mb-4 text-center font-normal text-sm leading-[22px] text-gray20">
+          좌우로 드래그하여 별점을 매겨주세요.
+        </div>
         <div className="h-[1px] bg-[#F6F6F6] mb-4"></div>
-
         <div className="px-5 relative">
           <textarea
             ref={ref}
