@@ -1,14 +1,5 @@
 import { useNavigate } from "react-router-dom";
-
-interface DrawerHeaderProps {
-  title: string;
-  isAdmin: boolean;
-  reportTitle?: string;
-  reportContent?: string;
-  content?: string;
-  rightNone?: boolean;
-  action?: () => void;
-}
+import { DrawerHeaderProps } from "../types/common";
 
 const DrawerHeader = ({
   title,
@@ -17,6 +8,7 @@ const DrawerHeader = ({
   reportContent,
   content,
   rightNone,
+  errState,
   action,
 }: DrawerHeaderProps) => {
   const navigate = useNavigate();
@@ -27,6 +19,9 @@ const DrawerHeader = ({
       else return false;
     } else if (title === "리뷰") {
       if (!content?.length) return true;
+      else return false;
+    } else if (title === "프로필수정") {
+      if (errState) return true;
       else return false;
     }
   };

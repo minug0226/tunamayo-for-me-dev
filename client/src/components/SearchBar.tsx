@@ -1,22 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
+import { ToiletPosition } from "../types/toilet";
+// import { SearchBarProps } from "../types/common";
+import { useDispatch } from "react-redux";
+import { changeCenter } from "../slices/mapCenterSlice";
+import { useAllToiletsQuery } from "../api/toilet";
 
-interface Latlng {
-  lat: number;
-  lng: number;
-}
-interface ToiletPosition {
-  id: number;
-  title: string;
-  roadName: string;
-  latlng: Latlng;
-}
+const SearchBar = () => {
+  const dispatch = useDispatch();
+  const allToilets = useAllToiletsQuery();
 
-interface SearchBarProps {
-  data?: ToiletPosition[];
-  setCenter: any;
-}
-
-const SearchBar = ({ data, setCenter }: SearchBarProps) => {
   const [matchingList, setMatchingList] = useState<ToiletPosition[]>([]);
   const [keyword, setKeyword] = useState("");
   const [searchOverlay, setSearchOverlay] = useState<boolean>(false);
@@ -25,9 +17,22 @@ const SearchBar = ({ data, setCenter }: SearchBarProps) => {
     setKeyword(e.target.value);
   };
 
+  // useMemo(() => {
+  //   if (keyword.length && allToilets?.data) {
+  //     const filteredToilet = [...allToilets.data].filter((toilet) => {
+  //       return (
+  //         toilet.roadName.includes(keyword) || toilet.title.includes(keyword)
+  //       );
+  //     });
+  //     setMatchingList(filteredToilet);
+  //   } else {
+  //     setMatchingList([]);
+  //   }
+  // }, [keyword]);
+
   useEffect(() => {
-    if (keyword.length && data) {
-      const filteredToilet = [...data].filter((toilet) => {
+    if (keyword.length && allToilets?.data) {
+      const filteredToilet = [...allToilets.data].filter((toilet) => {
         return (
           toilet.roadName.includes(keyword) || toilet.title.includes(keyword)
         );
@@ -79,7 +84,8 @@ const SearchBar = ({ data, setCenter }: SearchBarProps) => {
                   <div
                     key={i}
                     onClick={() => {
-                      setCenter({ center: toilet.latlng, isAllow: false });
+                      dispatch(changeCenter(toilet.latlng));
+                      // setCenter({ center: toilet.latlng, isAllow: false });
                       setKeyword(toilet.title);
                       setSearchOverlay(false);
                       setMatchingList([]);
@@ -137,25 +143,6 @@ const SearchBar = ({ data, setCenter }: SearchBarProps) => {
         </div>
       )}
     </>
-
-    // {matchingList.length ? (
-    //   <div className="w-full h-[100px] rounded-md shadow-search bg-white">
-    //     {matchingList.map((toilet, i) => {
-    //       return (
-    //         <div
-    //           key={i}
-    //           onClick={() => {
-    //             setCenter(toilet.latlng);
-    //             setMatchingList([]);
-    //           }}
-    //         >
-    //           <div>{toilet.title}</div>
-    //         </div>
-    //       );
-    //     })}
-    //     </div>
-    //   ) : null}
-    // </div>
   );
 };
 

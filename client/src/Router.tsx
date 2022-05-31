@@ -3,7 +3,6 @@ import Login from "./routes/Login";
 import SignUp from "./routes/SignUp";
 import Main from "./routes/Main";
 import Toilet from "./routes/Toilet";
-import Mypage from "./routes/Mypage";
 import WriteComment from "./routes/WriteComment";
 import Token from "./components/Token";
 import MyComments from "./routes/MyComments";
@@ -24,7 +23,6 @@ const Router = () => {
           <Route path="signup" element={<SignUp />} />
           <Route path="toilet/:toiletId" element={<Toilet />} />
           <Route path="toilet/:toiletId/comment" element={<WriteComment />} />
-          <Route path="my" element={<Mypage />} />
           <Route path="my/comments" element={<MyComments />} />
           <Route path="report" element={<WriteReport />} />
           <Route path="admin" element={<Admin />} />

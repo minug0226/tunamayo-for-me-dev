@@ -1,51 +1,58 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { useUserInfoQuery } from "../api/user";
 import DrawerHeader from "../components/DrawerHeader";
+import Loading from "../components/Loading";
 import Modal from "../components/Modal";
-import { customAxios } from "../lib/customAxios";
+import { displayModal } from "../slices/modalSlice";
+import { RootState } from "../store/store";
 
 const Admin = () => {
   const navigate = useNavigate();
-  const [modal, setModal] = useState<boolean>(false);
+  const dispatch = useDispatch();
+  const modal = useSelector<RootState>((state) => state.modal.value);
+  const userInfo = useUserInfoQuery();
 
   useEffect(() => {
-    customAxios.get("/users").then((res) => {
-      if (!res.data.userInfo.isAdmin) {
-        setModal(true);
-      }
-    });
-  }, []);
+    if (userInfo.isError) dispatch(displayModal());
+  }, [userInfo]);
 
   return (
     <>
-      <div className="relative">
-        <DrawerHeader title="관리자 페이지" isAdmin={true} />
-        {modal && (
-          <Modal
-            title="관리자만 접근이 가능합니다."
-            setModal={setModal}
-            action={() => navigate("/", { replace: true })}
-            oneButton="확인"
-          />
-        )}
-
-        {modal ? null : (
+      {userInfo.isLoading ? (
+        <Loading content="관리자 확인중.." />
+      ) : (
+        <div className="relative">
           <>
-            <div
-              onClick={() => navigate("/admin/reports?type=report")}
-              className="cursor-pointer py-9 text-center border-b border-gray20 text-base font-normal leading-[26px] text-tnBlack"
-            >
-              제보 리스트
-            </div>
-            <div
-              onClick={() => navigate("/admin/reports?type=inquiry")}
-              className="cursor-pointer py-9 text-center border-b border-gray20 text-base font-normal leading-[26px] text-tnBlack"
-            >
-              문의 리스트
-            </div>
+            <DrawerHeader title="관리자 페이지" isAdmin={true} />
+            {modal ? null : (
+              <>
+                <div
+                  onClick={() => navigate("/admin/reports?type=report")}
+                  className="cursor-pointer py-9 text-center border-b border-gray20 text-base font-normal leading-[26px] text-tnBlack"
+                >
+                  제보 리스트
+                </div>
+                <div
+                  onClick={() => navigate("/admin/reports?type=inquiry")}
+                  className="cursor-pointer py-9 text-center border-b border-gray20 text-base font-normal leading-[26px] text-tnBlack"
+                >
+                  문의 리스트
+                </div>
+              </>
+            )}
           </>
-        )}
-      </div>
+        </div>
+      )}
+
+      {modal && (
+        <Modal
+          title="관리자만 접근이 가능합니다."
+          action={() => navigate("/", { replace: true })}
+          oneButton="확인"
+        />
+      )}
     </>
   );
 };

@@ -1,49 +1,85 @@
 import { useEffect, useRef, useState } from "react";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import {
+  useCommentQuery,
+  usePatchCommentQuery,
+  usePostCommentQuery,
+} from "../api/comment";
 import DrawerHeader from "../components/DrawerHeader";
+import StarRating from "../components/StarRating";
 import { customAxios } from "../lib/customAxios";
+import { getQueryString } from "../lib/utils";
+import { useQueryClient } from "react-query";
 
 const WriteComment = () => {
   const navigate = useNavigate();
-  const location = useLocation();
+  const commentId = Number(getQueryString());
   const ref = useRef<HTMLTextAreaElement | null>(null);
-  const queryString: string = location.search;
-  const commentId: string = queryString.split("=")[1];
-  const { toiletId } = useParams();
+  const toiletId = Number(useParams().toiletId);
   const [content, setContent] = useState<string>("");
   const [rating, setRating] = useState<number>(0);
+  const patchComment = usePatchCommentQuery();
+  const postComment = usePostCommentQuery();
+  const queryClient = useQueryClient();
+  // const setPatchComment = (content, rating) => {
+  //   setContent(content);
+  //   setRating(rating);
+  // };
 
-  const numberOfFilled = Math.floor(rating); // 꽉별 개수
-  const numberOfHalfFilled = rating % 1 === 0 ? 0 : 1; // 반별 개수
-  const numberOfNonFilled = 5 - (numberOfFilled + numberOfHalfFilled); // 빈별 개수
-
-  useEffect(() => {
+  const setOriginComment = (data: any) => {
     if (commentId) {
-      customAxios
-        .get(`/toilets/${toiletId}/comments?commentId=${commentId}`)
-        .then((res) => {
-          if (res.status === 206) {
-            setContent(res.data.comment.content);
-            setRating(res.data.comment.rating);
-          }
-        });
+      setContent(data.content);
+      setRating(data.rating);
     }
-  }, []);
+  };
+  useCommentQuery(Number(toiletId), Number(commentId), setOriginComment);
+  // useEffect(() => {
+  //   if (commentId) {
+  //     // setContent(comment.data.content);
+  //     // setRating(comment.data.rating);
+  //   }
+  //   // if (commentId) {
+  //   //   customAxios
+  //   //     .get(`/toilets/${toiletId}/comments?commentId=${commentId}`)
+  //   //     .then((res) => {
+  //   //       if (res.status === 206) {
+  //   //         setContent(res.data.comment.content);
+  //   //         setRating(res.data.comment.rating);
+  //   //       }
+  //   //     });
+  //   // }
+  // }, []);
 
-  const postComment = async () => {
+  const submitHandler = async () => {
     if (commentId) {
-      await customAxios.patch(`/toilets/${toiletId}/comments/${commentId}`, {
-        content,
-        rating,
-      });
-      navigate(`/toilet/${toiletId}`, { replace: true });
+      patchComment.mutate(
+        { toiletId, commentId, content, rating },
+        {
+          onSuccess: () => {
+            queryClient.invalidateQueries(["allComments", toiletId]);
+            navigate(`/toilet/${toiletId}`, { replace: true });
+          },
+        }
+      );
+      // await customAxios.patch(`/toilets/${toiletId}/comments/${commentId}`, {
+      //   content,
+      //   rating,
+      // });
     } else {
-      await customAxios.post(`/toilets/${toiletId}/comments`, {
-        content,
-        rating,
-      });
-
-      navigate(`/toilet/${toiletId}`, { replace: true });
+      postComment.mutate(
+        { toiletId, content, rating },
+        {
+          onSuccess: () => {
+            queryClient.invalidateQueries(["allComments", toiletId]);
+            navigate(`/toilet/${toiletId}`, { replace: true });
+          },
+        }
+      );
+      // await customAxios.post(`/toilets/${toiletId}/comments`, {
+      //   content,
+      //   rating,
+      // });
+      // navigate(`/toilet/${toiletId}`, { replace: true });
     }
   };
 
@@ -52,11 +88,10 @@ const WriteComment = () => {
       <DrawerHeader
         title="리뷰"
         isAdmin={false}
-        action={postComment}
+        action={submitHandler}
         content={content}
       />
       <div>
-        {/* 피터 수정 */}
         <div className="flex flex-col items-center">
           <div className="relative flex w-fit items-center justify-center gap-x-1">
             <input
@@ -68,51 +103,19 @@ const WriteComment = () => {
               onChange={(e) => setRating(Number(e.target.value))}
             />
             <div className="flex items-center">
-              {/* 피터 수정 */}
               <div className="pt-4 pb-1 flex items-center space-x-5">
-                {Array(numberOfFilled)
-                  .fill(1)
-                  .map((_, i) => (
-                    <div key={i}>
-                      <img
-                        // 피터 수정
-                        className="w-9 h-9"
-                        src="/images/star/star-filled-blue.svg"
-                        alt="filled"
-                      />
-                    </div>
-                  ))}
-                {Array(numberOfHalfFilled)
-                  .fill(1)
-                  .map((_, i) => (
-                    <div key={i}>
-                      <img
-                        // 피터 수정
-                        className="w-9 h-9"
-                        src="/images/star/star-half-blue.svg"
-                        alt="half"
-                      />
-                    </div>
-                  ))}
-                {Array(numberOfNonFilled)
-                  .fill(1)
-                  .map((_, i) => (
-                    <div key={i}>
-                      <img
-                        // 피터 수정
-                        className="w-9 h-9"
-                        src="/images/star/star-non-blue.svg"
-                        alt="non"
-                      />
-                    </div>
-                  ))}
+                <StarRating
+                  rating={rating}
+                  imgClass="w-9 h-9"
+                  starColor="blue"
+                />
               </div>
             </div>
           </div>
         </div>
-        {/* 피터 수정 */}
+
         <div className="pt-1 mb-4 text-center font-normal text-sm leading-[22px] text-gray20">
-          좌우로 드래그하여 별점을 매겨주세요.
+          좌우로 드래그하여 별점을 매겨주세요!
         </div>
         <div className="h-[1px] bg-[#F6F6F6] mb-4"></div>
         <div className="px-5 relative">

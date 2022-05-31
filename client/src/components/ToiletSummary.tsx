@@ -1,8 +1,4 @@
-import { IToilet } from "../lib/interfaces";
-
-interface ToiletSummaryProps {
-  toilet?: IToilet;
-}
+import { ToiletSummaryProps } from "../types/toilet";
 
 const ToiletSummary = ({ toilet }: ToiletSummaryProps) => {
   return (

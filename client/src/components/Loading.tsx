@@ -1,12 +1,8 @@
-interface LoadingProps {
-  content: string;
-}
-
+import { LoadingProps } from "../types/common";
 const Loading = ({ content }: LoadingProps) => {
   return (
     <div className="absolute top-0 w-full min-h-[100vh] z-[100] bg-loadingOverlay ">
       <div className="flex justify-center items-center h-screen">
-        {/* <div className="animate-spinLoadig w-5 h-5 mr-[10px] border-4 rounded-full border-[#B3DFFF]"></div> */}
         <svg
           role="status"
           className="w-4 h-4 mr-[10px] text-white animate-spin fill-tnBlue"

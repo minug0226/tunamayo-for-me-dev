@@ -1,56 +1,70 @@
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { customAxios } from "../lib/customAxios";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { logoutHandler } from "../slices/isLoginSlice";
-import { IUser } from "../lib/interfaces";
-import { Dispatch, SetStateAction, useState } from "react";
+import { useEffect, useState } from "react";
 import Modal from "./Modal";
+import { RootState } from "../store/store";
+import { displayModal, hideModal } from "../slices/modalSlice";
+import { DrawerProps } from "../types/common";
+import { useLogoutQuery, useUserInfoQuery } from "../api/user";
 
-interface DrawerProps {
-  drawer: boolean;
-  drawerClose: boolean;
-  userInfo: IUser | null;
-  setModal: Dispatch<SetStateAction<boolean>>;
-}
-
-const Drawer = ({ drawer, drawerClose, userInfo, setModal }: DrawerProps) => {
+const Drawer = ({ drawer, drawerClose }: DrawerProps) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [logoutModal, setLogoutModal] = useState(false);
+  const logoutModal = useSelector<RootState>((state) => state.modal.value);
+  const [logoutState, setLogoutState] = useState<boolean>(false);
+
+  const logout = useLogoutQuery();
+  const userInfo = useUserInfoQuery();
+
+  // console.log(userInfo);
+  // useEffect(() => {
+  //   if (userInfo.isError) queryClient.invalidateQueries("userInfo");
+  // }, [userInfo]);
 
   const logoutRequest = async () => {
-    const request = await customAxios.post("users/logout", {});
-    if (request.status === 200) {
-      dispatch(logoutHandler());
-      window.location.reload();
-    } else window.location.reload();
+    logout.mutate(
+      {},
+      {
+        onSuccess: () => {
+          dispatch(hideModal());
+          window.location.reload();
+        },
+      }
+    );
+    // if (request.status === 200) {
+    //   dispatch(logoutHandler());
+    //   window.location.reload();
+    // } else window.location.reload();
   };
 
   const drawerClass = () => {
-    if (drawerClose)
-      return "animate-drawPopDown absolute top-0 left-0 z-50 w-[212px] h-full bg-white pl-4 pr-[17px] pt-[9px] pb-4 flex flex-col";
-    else
-      return "animate-drawPopUp absolute top-0 left-0 z-50 w-[212px] h-full bg-white pl-4 pr-[17px] pt-[9px] pb-4 flex flex-col";
+    const defaultClass =
+      "absolute top-0 left-0 z-50 w-[212px] h-full bg-white pl-4 pr-[17px] pt-[9px] pb-10 flex flex-col ";
+    if (drawerClose) return defaultClass + "animate-drawPopDown";
+    else return defaultClass + "animate-drawPopUp";
   };
 
   return (
     <>
-      {logoutModal && (
-        <Modal
-          title="로그아웃 하시겠습니까?"
-          left="취소"
-          right="로그아웃"
-          setModal={setLogoutModal}
-          action={logoutRequest}
-        />
-      )}
+      {logoutModal ? (
+        logoutState ? (
+          <Modal
+            title="로그아웃 하시겠습니까?"
+            left="취소"
+            right="로그아웃"
+            action={logoutRequest}
+          />
+        ) : null
+      ) : null}
 
       {drawer ? (
         <div className={drawerClass()}>
           <div
             onClick={() => {
-              userInfo
-                ? navigate(`/profile?nickname=${userInfo.nickname}`)
+              userInfo?.data
+                ? navigate(`/profile?nickname=${userInfo?.data?.nickname}`)
                 : navigate("/login");
             }}
             className="flex items-center justify-between mb-[55px] cursor-pointer"
@@ -60,7 +74,9 @@ const Drawer = ({ drawer, drawerClose, userInfo, setModal }: DrawerProps) => {
                 <img src="/images/main/profile-icon.svg" alt="profile-icon" />
               </div>
               <div className="font-normal text-sm leading-[22px] text-tnBlack">
-                {userInfo ? userInfo.nickname : "로그인이 필요합니다"}
+                {userInfo?.data
+                  ? userInfo?.data?.nickname
+                  : "로그인이 필요합니다"}
               </div>
             </div>
             <img src="/images/main/right-arrow.svg" alt="right-arrow" />
@@ -70,15 +86,19 @@ const Drawer = ({ drawer, drawerClose, userInfo, setModal }: DrawerProps) => {
             <div
               className="cursor-pointer"
               onClick={() => {
-                userInfo ? navigate("/my/comments") : setModal(true);
+                userInfo?.data
+                  ? navigate("/my/comments")
+                  : dispatch(displayModal());
               }}
             >
-              내가 쓴 댓글
+              내가 쓴 리뷰
             </div>
             <div
               className="cursor-pointer"
               onClick={() => {
-                userInfo ? navigate("/report?type=report") : setModal(true);
+                userInfo?.data
+                  ? navigate("/report?type=report")
+                  : dispatch(displayModal());
               }}
             >
               화장실 제보하기
@@ -86,13 +106,15 @@ const Drawer = ({ drawer, drawerClose, userInfo, setModal }: DrawerProps) => {
             <div
               className="cursor-pointer"
               onClick={() => {
-                userInfo ? navigate("/report?type=inquiry") : setModal(true);
+                userInfo?.data
+                  ? navigate("/report?type=inquiry")
+                  : dispatch(displayModal());
               }}
             >
               1:1 문의
             </div>
             <div className="cursor-pointer">버전정보</div>
-            {userInfo?.isAdmin ? (
+            {userInfo?.data?.isAdmin ? (
               <div
                 className="cursor-pointer"
                 onClick={() => {
@@ -105,11 +127,15 @@ const Drawer = ({ drawer, drawerClose, userInfo, setModal }: DrawerProps) => {
           </div>
           <div
             onClick={() => {
-              userInfo ? setLogoutModal(true) : navigate("/login");
+              if (userInfo?.data) {
+                setLogoutState(true);
+                dispatch(displayModal());
+                return;
+              } else navigate("/login");
             }}
             className="text-gray40 text-center font-normal text-base leading-[26px] w-full cursor-pointer"
           >
-            {userInfo ? "로그아웃" : "로그인"}
+            {userInfo?.data ? "로그아웃" : "로그인"}
           </div>
         </div>
       ) : null}

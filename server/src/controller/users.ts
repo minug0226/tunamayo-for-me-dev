@@ -56,7 +56,7 @@ const userController = {
   },
 
   signUp: async (req: Request, res: Response) => {
-    const { nickname, email, oAuthProvider, oAtuhId } = req.body;
+    const { nickname, email, oAuthProvider, oAuthId } = req.body;
     // 클라이언트에서 받아온 요청 바디 값들을 user 테이블에 insert한다.
 
     try {
@@ -72,7 +72,7 @@ const userController = {
         nickname,
         email,
         oAuthProvider,
-        oAuthProviderId: oAtuhId,
+        oAuthProviderId: oAuthId,
       });
 
       const payload = { id: insertQuery.identifiers[0].id };
@@ -89,7 +89,9 @@ const userController = {
 
   kakaoLogin: async (req: Request, res: Response) => {
     // 카카오 OAuth 페이지에서 동의 완료 후 redirect되는 api
+    const redirectPath = req.query?.state;
     const code = req.query?.code;
+
     if (!code) return res.status(403).json({ message: "oauth code not found" });
 
     try {
@@ -142,11 +144,16 @@ const userController = {
           "Set-Cookie",
           `token=${tunaToken}; Path=/; Max-age=${maxAge};`
         );
-        return res.redirect("http://localhost:3000/");
+        // return res.redirect("https://tunamayo-toilet.com");
+        return res.redirect(301, `http://localhost:3000${redirectPath}`);
       }
       // CASE2) 처음 가입하는 유저인 경우 -> 클라이언트의 가입 페이지로 리다이렉트 시켜줌.
+      // return res.redirect(
+      //   `https://tunamayo-toilet.com/signup?oauthprovider=kakao&oauthid=${kakaoOauthId}&email=${kakaoUserEmail}`
+      // );
       return res.redirect(
-        `http://localhost:3000/signup?oauthprovider=kakao&oauthid=${kakaoOauthId}&email=${kakaoUserEmail}`
+        301,
+        `http://localhost:3000/signup?oauthprovider=kakao&oauthid=${kakaoOauthId}&email=${kakaoUserEmail}&redirect=${redirectPath}`
       );
     } catch (err) {
       console.log(err);
@@ -156,6 +163,7 @@ const userController = {
 
   googleLogin: async (req: Request, res: Response) => {
     // 구글 OAuth 페이지에서 동의 완료 후 redirect되는 api
+    const redirectPath = req.query?.state;
     const code = req.query?.code;
     if (!code) return res.status(403).json({ message: "oauth code not found" });
 
@@ -213,12 +221,18 @@ const userController = {
           "Set-Cookie",
           `token=${tunaToken}; Path=/; Max-age=${maxAge};`
         );
-        return res.redirect("http://localhost:3000");
+        // return res.redirect("https://tunamayo-toilet.com");
+        return res.redirect(301, `http://localhost:3000${redirectPath}`);
       }
       // CASE2) 처음 가입하는 유저인 경우 -> 클라이언트의 가입 페이지로 리다이렉트 시켜줌.
+      // return res.redirect(
+      //   `https://tunamayo-toilet.com/signup?oauthprovider=google&oauthid=${googleOauthId}&email=${googleUserEmail}`
+      // );
       return res.redirect(
-        `http://localhost:3000/signup?oauthprovider=google&oauthid=${googleOauthId}&email=${googleUserEmail}`
+        301,
+        `http://localhost:3000/signup?oauthprovider=google&oauthid=${googleOauthId}&email=${googleUserEmail}&redirect=${redirectPath}`
       );
+      // return res.sendStatus(200);
     } catch (err) {
       console.log(err);
       return res.sendStatus(500);
@@ -247,10 +261,11 @@ const userController = {
     const userId = req.userId;
 
     try {
-      await DB.manager.delete(Comment, { id: userId });
+      await DB.manager.delete(Comment, { userId });
       await DB.manager.delete(Like, { userId });
       await DB.manager.delete(Report, { userId });
       await DB.manager.delete(User, { id: userId });
+      res.clearCookie("token");
 
       return res.sendStatus(200);
     } catch (err) {

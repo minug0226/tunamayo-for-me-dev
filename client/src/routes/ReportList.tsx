@@ -1,48 +1,30 @@
 import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
 import DrawerHeader from "../components/DrawerHeader";
 import Report from "../components/Report";
-import { customAxios } from "../lib/customAxios";
-
-interface IReport {
-  id: number;
-  reportTitle: string;
-  reportContent: string;
-  reportType: string;
-  userId: number;
-  createdAt: string;
-  updatedAt: string;
-  user: User;
-}
-
-interface User {
-  createdAt: string;
-  email: string;
-  nickname: string;
-  oAuthProvider: string;
-  oAuthProviderId: string;
-  updatedAt: string;
-}
+import { IReport } from "../types/report";
+import { getQueryString } from "../lib/utils";
+import { useAllReportsQuery } from "../api/report";
 
 const ReportList = () => {
-  const location = useLocation();
-  const queryString: string = location.search;
-  const reportType: string = queryString.split("=")[1];
-  const [reportList, setReportList] = useState<IReport[]>([]);
+  const reportType = getQueryString();
+  // const [reportList, setReportList] = useState<IReport[]>([]);
+  const allReports = useAllReportsQuery(reportType);
   const [page, setPage] = useState(1);
   const limit = 7;
   const offset = (page - 1) * limit;
-  const numPages = Math.ceil(reportList.length / limit);
+  const numPages = Math.ceil(allReports?.data?.length / limit);
   const pageGroup = Math.ceil(page / 5) - 1;
 
-  const reportListRequest = async () => {
-    const request = await customAxios.get("/reports");
-    const list = request.data.reportList;
-    const reports = list.filter(
-      (report: IReport) => report.reportType === reportType
-    );
-    setReportList(reports);
-  };
+  // console.log("fad", allReports.data);
+
+  // const reportListRequest = async () => {
+  // const request = await customAxios.get("/reports");
+  // const list = request.data.reportList;
+  // const reports = allReports?.data?.filter(
+  //   (report: IReport) => report.reportType === reportType
+  // );
+  // setReportList(reports);
+  // };
 
   const indexClass = (index: number) => {
     if (index === page)
@@ -52,7 +34,7 @@ const ReportList = () => {
   };
 
   const nextPageIconAction = () => {
-    if (page === Math.ceil(reportList.length / 7)) return;
+    if (page === Math.ceil(allReports?.data?.length / 7)) return;
     else {
       setPage(page + 1);
     }
@@ -65,9 +47,9 @@ const ReportList = () => {
     }
   };
 
-  useEffect(() => {
-    reportListRequest();
-  }, []);
+  // useEffect(() => {
+  //   reportListRequest();
+  // }, []);
 
   return (
     <>
@@ -77,9 +59,12 @@ const ReportList = () => {
       />
 
       <div className="min-h-[600px]">
-        {reportList.slice(offset, offset + limit).map((report: IReport) => {
-          return <Report key={report.id} report={report} />;
-        })}
+        {allReports?.data?.length &&
+          allReports?.data
+            ?.slice(offset, offset + limit)
+            .map((report: IReport) => {
+              return <Report key={report.id} report={report} />;
+            })}
       </div>
       <div className="px-20 py-[17px] flex justify-center items-center h-full">
         <img
@@ -93,27 +78,28 @@ const ReportList = () => {
           alt="prev"
         />
         <div className="flex">
-          {Array(numPages)
-            .fill(0)
-            .map((_, i) => {
-              if (i >= pageGroup * 5 && i <= pageGroup * 5 + 4) {
-                return (
-                  <div
-                    key={i + 1}
-                    className={indexClass(i + 1)}
-                    onClick={() => setPage(i + 1)}
-                  >
-                    {i + 1}
-                  </div>
-                );
-              }
-            })}
+          {numPages &&
+            Array(numPages)
+              .fill(0)
+              .map((_: number, i) => {
+                if (i >= pageGroup * 5 && i <= pageGroup * 5 + 4) {
+                  return (
+                    <div
+                      key={i + 1}
+                      className={indexClass(i + 1)}
+                      onClick={() => setPage(i + 1)}
+                    >
+                      {i + 1}
+                    </div>
+                  );
+                }
+              })}
         </div>
         <img
           className="w-6 h-6 cursor-pointer"
           onClick={nextPageIconAction}
           src={
-            page === Math.ceil(reportList.length / 7)
+            page === Math.ceil(allReports?.data?.length / 7)
               ? "/images/report/next-icon-gray.svg"
               : "/images/report/next-icon-black.svg"
           }

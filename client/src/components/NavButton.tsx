@@ -1,8 +1,4 @@
-import { Dispatch, SetStateAction } from "react";
-
-interface NavProps {
-  setDrawer: Dispatch<SetStateAction<boolean>>;
-}
+import { NavProps } from "../types/common";
 
 const NavButton = ({ setDrawer }: NavProps) => {
   return (

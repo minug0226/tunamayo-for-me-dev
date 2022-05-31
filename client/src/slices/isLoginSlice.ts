@@ -1,5 +1,4 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { store } from "../store/store";
 
 export const isLoginSlice = createSlice({
   name: "isLogin",

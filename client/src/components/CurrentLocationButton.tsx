@@ -1,37 +1,40 @@
-import { Dispatch, SetStateAction, useState } from "react";
+import { useState } from "react";
 import Loading from "./Loading";
+// import { CurrentLocationButtonProps } from "../types/map";
+import { useDispatch } from "react-redux";
+import { changeCenter } from "../slices/mapCenterSlice";
+import { changeLocationAllow } from "../slices/locationAllowSlice";
+import { changeCurrentLocation } from "../slices/currentLocationSlice";
 
-interface Center {
-  lat: number;
-  lng: number;
-}
-
-interface CenterState {
-  center: Center;
-  isAllow: boolean;
-}
-
-interface CurrentLocationButtonProps {
-  setCenter: Dispatch<SetStateAction<CenterState>>;
-}
-
-const CurrentLocationButton = ({ setCenter }: CurrentLocationButtonProps) => {
+const CurrentLocationButton = () => {
+  const dispatch = useDispatch();
   const [clickState, setClickState] = useState(false);
 
   const getCurrentLocation = async () => {
     setClickState(true);
     if (navigator.geolocation) {
-      // GeoLocation을 사용해서 사용자의 위치를 얻어온다.
       navigator.geolocation.getCurrentPosition(
         (position) => {
-          setCenter((prev) => ({
-            ...prev,
-            center: {
+          dispatch(
+            changeCenter({
               lat: position.coords.latitude,
               lng: position.coords.longitude,
-            },
-            isAllow: true,
-          }));
+            })
+          );
+          dispatch(
+            changeCurrentLocation({
+              lat: position.coords.latitude,
+              lng: position.coords.longitude,
+            })
+          );
+          // setCenter((prev) => ({
+          //   ...prev,
+          //   center: {
+          //     lat: position.coords.latitude,
+          //     lng: position.coords.longitude,
+          //   },
+          //   isAllow: true,
+          // }));
           setClickState(false);
         },
         (err) => {
@@ -39,14 +42,12 @@ const CurrentLocationButton = ({ setCenter }: CurrentLocationButtonProps) => {
           setClickState(false);
         }
       );
-    }
-    // 사용자가 위치 동의 허용을 하지 않았을 때
-    else {
-      setCenter((prev) => ({
-        ...prev,
-        isAllow: false,
-      }));
-      console.log("-");
+    } else {
+      dispatch(changeLocationAllow(false));
+      // setCenter((prev) => ({
+      //   ...prev,
+      //   isAllow: false,
+      // }));
     }
   };
 

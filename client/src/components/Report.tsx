@@ -1,28 +1,5 @@
 import { useNavigate } from "react-router-dom";
-
-interface IReport {
-  id: number;
-  reportTitle: string;
-  reportContent: string;
-  reportType: string;
-  userId: number;
-  createdAt: string;
-  updatedAt: string;
-  user: User;
-}
-
-interface User {
-  createdAt: string;
-  email: string;
-  nickname: string;
-  oAuthProvider: string;
-  oAuthProviderId: string;
-  updatedAt: string;
-}
-
-interface ReportProps {
-  report: IReport;
-}
+import { ReportProps } from "../types/report";
 
 const Report = ({ report }: ReportProps) => {
   const navigate = useNavigate();

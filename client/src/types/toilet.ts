@@ -1,40 +1,4 @@
-export interface PropsType {
-  toiletInfo: ToiletInfoProps;
-  commentInfo: CommentInfoProps;
-  modalPopUp: boolean;
-}
-
-export interface MyCommentProps {
-  content: string;
-  createdAt: string;
-  id?: number;
-  rating: number;
-  toiletId: number;
-  updatedAt?: string;
-  userId?: number;
-}
-
-export interface IComment {
-  content: string;
-  nickname: string;
-  id: number;
-  userId: number;
-  rating: number;
-  toiletId: number;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface CommentInfoProps {
-  length: number;
-  avg: number;
-}
-
-export interface ToiletInfoProps {
-  title: string;
-  roadName: string;
-  id: number;
-}
+import { Latlng } from "./map";
 
 export interface IToilet {
   agency?: string;
@@ -69,8 +33,30 @@ export interface IToilet {
   urinalCount?: number;
 }
 
-export interface IUser {
-  nickname?: string;
-  email?: string;
-  isAdmin?: boolean;
+export interface ToiletInfoProps {
+  title: string;
+  roadName: string;
+  id: number;
+}
+
+export interface ToiletSummaryProps {
+  toilet?: IToilet;
+}
+
+export interface ToiletDetailsProps {
+  toilet?: IToilet;
+}
+
+export interface ToiletPosition {
+  id: number;
+  title: string;
+  roadName: string;
+  latlng: Latlng;
+}
+
+export interface ToiletList {
+  id: number;
+  title: string;
+  latlng: Latlng;
+  roadName: string;
 }
