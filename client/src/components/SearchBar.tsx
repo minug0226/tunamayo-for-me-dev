@@ -1,9 +1,10 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState, useCallback } from "react";
 import { ToiletPosition } from "../types/toilet";
 // import { SearchBarProps } from "../types/common";
 import { useDispatch } from "react-redux";
 import { changeCenter } from "../slices/mapCenterSlice";
 import { useAllToiletsQuery } from "../api/toilet";
+import _ from "lodash";
 
 const SearchBar = () => {
   const dispatch = useDispatch();
@@ -13,9 +14,9 @@ const SearchBar = () => {
   const [keyword, setKeyword] = useState("");
   const [searchOverlay, setSearchOverlay] = useState<boolean>(false);
 
-  const searchHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setKeyword(e.target.value);
-  };
+  // const searchHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   setKeyword(e.target.value);
+  // };
 
   // useMemo(() => {
   //   if (keyword.length && allToilets?.data) {
@@ -30,19 +31,41 @@ const SearchBar = () => {
   //   }
   // }, [keyword]);
 
-  useEffect(() => {
-    if (keyword.length && allToilets?.data) {
+  const queryRequest = async (search: string, allToilets: any) => {
+    console.log("keyword", search);
+    console.log("data", allToilets?.data);
+    if (search && allToilets?.data) {
       const filteredToilet = [...allToilets.data].filter((toilet) => {
         return (
-          toilet.roadName.includes(keyword) || toilet.title.includes(keyword)
+          toilet.roadName.includes(search) || toilet.title.includes(search)
         );
       });
       setMatchingList(filteredToilet);
     } else {
       setMatchingList([]);
     }
-  }, [keyword]);
+  };
 
+  // useEffect(() => {
+  //   if (keyword.length && allToilets?.data) {
+  //     const filteredToilet = [...allToilets.data].filter((toilet) => {
+  //       return (
+  //         toilet.roadName.includes(keyword) || toilet.title.includes(keyword)
+  //       );
+  //     });
+  //     setMatchingList(filteredToilet);
+  //   } else {
+  //     setMatchingList([]);
+  //   }
+  // }, [keyword]);
+
+  const debounceFilter = useCallback(_.debounce(queryRequest, 500), []);
+
+  const searchHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setKeyword(e.target.value);
+    debounceFilter(e.target.value, allToilets);
+    if (keyword === "") setMatchingList([]);
+  };
   return (
     <>
       {searchOverlay ? (

@@ -82,7 +82,7 @@ const WriteComment = () => {
       // navigate(`/toilet/${toiletId}`, { replace: true });
     }
   };
-  
+
   return (
     <>
       <DrawerHeader
