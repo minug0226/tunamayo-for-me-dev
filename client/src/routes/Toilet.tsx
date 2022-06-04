@@ -1,6 +1,5 @@
-import Comments from "../components/Comments";
-import Header from "../components/Header";
-import ToiletInfo from "../components/ToiletInfo";
+import Comments from "../components/comment/Comments";
+import ToiletInfo from "../components/toilet/ToiletInfo";
 
 const Toilet = () => {
   return (

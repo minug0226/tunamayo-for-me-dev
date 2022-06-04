@@ -1,30 +1,27 @@
-import { useEffect, useRef, useState } from "react";
+import DrawerHeader from "../components/common/DrawerHeader";
+import StarRating from "../components/comment/StarRating";
+import { useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { useQueryClient } from "react-query";
 import {
   useCommentQuery,
   usePatchCommentQuery,
   usePostCommentQuery,
 } from "../api/comment";
-import DrawerHeader from "../components/DrawerHeader";
-import StarRating from "../components/StarRating";
-import { customAxios } from "../lib/customAxios";
 import { getQueryString } from "../lib/utils";
-import { useQueryClient } from "react-query";
 
 const WriteComment = () => {
   const navigate = useNavigate();
   const commentId = Number(getQueryString());
-  const ref = useRef<HTMLTextAreaElement | null>(null);
   const toiletId = Number(useParams().toiletId);
+
+  const ref = useRef<HTMLTextAreaElement | null>(null);
   const [content, setContent] = useState<string>("");
   const [rating, setRating] = useState<number>(0);
+
+  const queryClient = useQueryClient();
   const patchComment = usePatchCommentQuery();
   const postComment = usePostCommentQuery();
-  const queryClient = useQueryClient();
-  // const setPatchComment = (content, rating) => {
-  //   setContent(content);
-  //   setRating(rating);
-  // };
 
   const setOriginComment = (data: any) => {
     if (commentId) {
@@ -32,23 +29,8 @@ const WriteComment = () => {
       setRating(data.rating);
     }
   };
+
   useCommentQuery(Number(toiletId), Number(commentId), setOriginComment);
-  // useEffect(() => {
-  //   if (commentId) {
-  //     // setContent(comment.data.content);
-  //     // setRating(comment.data.rating);
-  //   }
-  //   // if (commentId) {
-  //   //   customAxios
-  //   //     .get(`/toilets/${toiletId}/comments?commentId=${commentId}`)
-  //   //     .then((res) => {
-  //   //       if (res.status === 206) {
-  //   //         setContent(res.data.comment.content);
-  //   //         setRating(res.data.comment.rating);
-  //   //       }
-  //   //     });
-  //   // }
-  // }, []);
 
   const submitHandler = async () => {
     if (commentId) {
@@ -61,10 +43,6 @@ const WriteComment = () => {
           },
         }
       );
-      // await customAxios.patch(`/toilets/${toiletId}/comments/${commentId}`, {
-      //   content,
-      //   rating,
-      // });
     } else {
       postComment.mutate(
         { toiletId, content, rating },
@@ -75,11 +53,6 @@ const WriteComment = () => {
           },
         }
       );
-      // await customAxios.post(`/toilets/${toiletId}/comments`, {
-      //   content,
-      //   rating,
-      // });
-      // navigate(`/toilet/${toiletId}`, { replace: true });
     }
   };
 
@@ -93,9 +66,9 @@ const WriteComment = () => {
       />
       <div>
         <div className="flex flex-col items-center">
-          <div className="relative flex w-fit items-center justify-center gap-x-1">
+          <div className="relative mx-auto flex w-fit items-center justify-center gap-x-1 py-1 focus:outline-none">
             <input
-              className="bg-red-500 absolute top-0 right-0 h-full w-full cursor-pointer py-0 opacity-0"
+              className="absolute top-0 right-0 h-full w-full cursor-pointer py-0 opacity-0 focus:outline-none appearance-none"
               type="range"
               step="0.5"
               min="0"
@@ -106,7 +79,7 @@ const WriteComment = () => {
               <div className="pt-4 pb-1 flex items-center space-x-5">
                 <StarRating
                   rating={rating}
-                  imgClass="w-9 h-9"
+                  imgClass="w-12 h-12"
                   starColor="blue"
                 />
               </div>

@@ -1,21 +1,33 @@
 import React, { useEffect, useState } from "react";
-import { useQueryClient } from "react-query";
 import { useNavigate } from "react-router-dom";
 import { useSignUpQuery } from "../api/user";
-import { customAxios } from "../lib/customAxios";
 import { getQueryString } from "../lib/utils";
 
 const SignUp = () => {
   const navigate = useNavigate();
+  const oAuthProvider = getQueryString(0);
+  const oAuthId = getQueryString(1);
+  const email = getQueryString(2);
+  const redirect = getQueryString(3);
+
   const [nickname, setNickname] = useState<string>("");
   const [nicknameMessage, setNicknameMessage] = useState<string>("");
   const [signupErrorMessage, setSignupErrorMessage] = useState<string>("");
   const [isNickname, setIsNickname] = useState<boolean>(false);
   const [errState, setErrState] = useState<boolean>(true);
-  const oAuthProvider = getQueryString(0);
-  const oAuthId = getQueryString(1);
-  const email = getQueryString(2);
-  const redirect = getQueryString(3);
+
+  const signUp = useSignUpQuery(
+    () => navigate(redirect, { replace: true }),
+    () => setSignupErrorMessage("이미 사용 중인 닉네임입니다.")
+  );
+
+  const signUpButtonHandler = () =>
+    signUp.mutate({
+      nickname,
+      email,
+      oAuthProvider,
+      oAuthId,
+    });
 
   const onChangeNickname = (e: React.ChangeEvent<HTMLInputElement>) => {
     const nicknameRegex = /^[가-힣]{2,8}$/;
@@ -41,7 +53,6 @@ const SignUp = () => {
     else setErrState(true);
   }, [nicknameMessage, signupErrorMessage]);
 
-  console.log(errState);
   const nicknameInputClass = () => {
     const defaultClass =
       "pl-4 box-border border-2 rounded-lg text-base font-normal w-full h-12 focus:outline-none";
@@ -54,33 +65,6 @@ const SignUp = () => {
     else return defaultClass + " border-gray20 focus:border-tnBlue";
   };
 
-  const signUp = useSignUpQuery(
-    () => navigate(redirect, { replace: true }),
-    () => setSignupErrorMessage("이미 사용 중인 닉네임입니다.")
-  );
-
-  const signUpButtonHandler = () =>
-    signUp.mutate({
-      nickname,
-      email,
-      oAuthProvider,
-      oAuthId,
-    });
-  // customAxios
-  //   .post("/users/signup", {
-  //     nickname,
-  //     email,
-  //     oAuthProvider,
-  //     oAuthId,
-  //   })
-  //   .then((res) => {
-  //     if (res.status === 201) navigate(redirect, { replace: true });
-  //   })
-  //   .catch((err) => {
-  //     if (err.response.status === 409) {
-  //       setSignupErrorMessage("이미 사용 중인 닉네임입니다.");
-  //     }
-  //   });
   return (
     <>
       <div className="pt-[128px] flex flex-col">
@@ -89,6 +73,7 @@ const SignUp = () => {
           <br />
           1초만에 화장실 찾기
         </div>
+
         <div className="mx-4 relative mb-[129px]">
           <input
             value={nickname}
@@ -107,6 +92,7 @@ const SignUp = () => {
               alt="clear-button"
             />
           ) : null}
+
           {signupErrorMessage ===
           "이미 사용 중인 닉네임입니다." ? null : nickname.length ? (
             <span
@@ -119,12 +105,14 @@ const SignUp = () => {
               {nicknameMessage}
             </span>
           ) : null}
+
           {signupErrorMessage === "이미 사용 중인 닉네임입니다." ? (
             <div className="pt-1 pl-2 text-sm font-normal text-tnRed">
               {signupErrorMessage}
             </div>
           ) : null}
         </div>
+
         <div className="px-4">
           <button
             disabled={errState}

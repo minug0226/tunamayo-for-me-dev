@@ -1,42 +1,27 @@
-import { useNavigate } from "react-router-dom";
+import DrawerHeader from "../components/common/DrawerHeader";
+import Modal from "../components/common/Modal";
+import Loading from "../components/common/Loading";
 import { useState, useRef } from "react";
-import { customAxios } from "../lib/customAxios";
-import DrawerHeader from "../components/DrawerHeader";
-import Modal from "../components/Modal";
-import Loading from "../components/Loading";
+import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store/store";
 import { displayModal } from "../slices/modalSlice";
-import { getQueryString } from "../lib/utils";
 import { usePostReportQuery } from "../api/report";
+import { getQueryString } from "../lib/utils";
 
 const WriteReport = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const reportType = getQueryString();
   const ref = useRef<HTMLTextAreaElement | null>(null);
+
+  const [reportTitle, setReportTitle] = useState<string>("");
+  const [reportContent, setReportContent] = useState<string>("");
   const modal = useSelector<RootState>((state) => state.modal.value);
-  const [reportTitle, setReportTitle] = useState("");
-  const [reportContent, setReportContent] = useState("");
-  // const [loading, setLoading] = useState(false);
 
   const postReport = usePostReportQuery(() => dispatch(displayModal()));
-
   const submitHandler = async () => {
     postReport.mutate({ reportTitle, reportContent, reportType });
-    // setLoading(true);
-    // await customAxios
-    //   .post("/reports", {
-    //     reportTitle,
-    //     reportContent,
-    //     reportType,
-    //   })
-    //   .then((res) => {
-    //     if (res.status === 201) {
-    //       setLoading(false);
-    //       dispatch(displayModal());
-    //     }
-    //   });
   };
 
   return (
@@ -46,6 +31,7 @@ const WriteReport = () => {
           content={reportType === "report" ? "화장실 제보하기" : "1:1 문의하기"}
         />
       ) : null}
+
       <DrawerHeader
         title={reportType === "report" ? "화장실 제보하기" : "1:1 문의하기"}
         isAdmin={false}
@@ -53,6 +39,7 @@ const WriteReport = () => {
         reportTitle={reportTitle}
         reportContent={reportContent}
       />
+
       <div className="relative">
         <input
           value={reportTitle}
@@ -61,6 +48,7 @@ const WriteReport = () => {
           className="w-full px-5 py-4 border-b border-[#F6F6F6] outline-none text-tnBlack"
           type="text"
         />
+
         <textarea
           autoComplete="off"
           ref={ref}
@@ -84,6 +72,7 @@ const WriteReport = () => {
           </div>
         )}
       </div>
+
       {modal && (
         <Modal
           title={

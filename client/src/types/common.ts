@@ -1,8 +1,6 @@
-import { ToiletInfoProps, ToiletPosition } from "./toilet";
-import { CommentInfoProps } from "./comment";
-import { IToilet } from "./toilet";
-import { IUser } from "./user";
 import { Dispatch, SetStateAction } from "react";
+import { IToilet, ToiletInfoProps } from "./toilet";
+import { CommentInfoProps } from "./comment";
 
 export interface ModalPopUpProps {
   toiletInfo: ToiletInfoProps;
@@ -12,10 +10,14 @@ export interface ModalPopUpProps {
 
 export type ModalPopUpState = "hidden" | "pop-up" | "pop-down";
 
+export interface NavProps {
+  setDrawer: Dispatch<SetStateAction<boolean>>;
+  setModalPopUp: Dispatch<SetStateAction<"pop-up" | "pop-down" | "hidden">>;
+}
+
 export interface DrawerProps {
   drawer: boolean;
   drawerClose: boolean;
-  // userInfo: IUser | null;
 }
 
 export interface DrawerHeaderProps {
@@ -51,12 +53,3 @@ export interface ModalProps {
   right?: string;
   action?: (data?: any) => void;
 }
-
-export interface NavProps {
-  setDrawer: Dispatch<SetStateAction<boolean>>;
-}
-
-// export interface SearchBarProps {
-//   data?: ToiletPosition[];
-//   setCenter: any;
-// }

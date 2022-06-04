@@ -1,5 +1,5 @@
 import { Response, NextFunction } from "express";
-import { CustomRequest } from "../customType/middleware";
+import { CustomRequest } from "../type/middleware";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 dotenv.config();

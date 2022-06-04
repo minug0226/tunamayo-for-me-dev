@@ -3,7 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 export const splashSlice = createSlice({
   name: "splash",
   initialState: {
-    value: false,
+    value: true,
   },
   reducers: {
     offSplash: (state) => {

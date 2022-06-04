@@ -1,29 +1,29 @@
-import { Map, MapMarker, MarkerClusterer } from "react-kakao-maps-sdk";
+import SearchBar from "../components/main/SearchBar";
+import NavButton from "../components/main/NavButton";
+import Drawer from "../components/main/Drawer";
+import CurrentLocationButton from "../components/main/CurrentLocationButton";
+import ModalPopUp from "../components/main/ModalPopUp";
+import Modal from "../components/common/Modal";
+import Loading from "../components/common/Loading";
+
 import { useEffect, useState } from "react";
-import ModalPopUp from "../components/ModalPopUp";
-import { customAxios } from "../lib/customAxios";
-import { IUser } from "../types/user";
-import { IComment, CommentInfoProps } from "../types/comment";
-import { ToiletInfoProps } from "../types/toilet";
-import SearchBar from "../components/SearchBar";
-import CurrentLocationButton from "../components/CurrentLocationButton";
-import NavButton from "../components/NavButton";
-import Drawer from "../components/Drawer";
-import Modal from "../components/Modal";
 import { useNavigate } from "react-router-dom";
-import Loading from "../components/Loading";
-import { useAllToiletsQuery } from "../api/toilet";
+import { Map, MapMarker, MarkerClusterer } from "react-kakao-maps-sdk";
+
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store/store";
-import { offSplash } from "../slices/splashSlice";
-import { ModalPopUpState } from "../types/common";
-import { useUserInfoQuery } from "../api/user";
 import { pauseGeoLocationApi } from "../slices/callGeoApiSlice";
 import { changeCenter } from "../slices/mapCenterSlice";
 import { changeLocationAllow } from "../slices/locationAllowSlice";
 import { changeCurrentLocation } from "../slices/currentLocationSlice";
-import { useAllCommentsQuery, useToiletModalInfoQuery } from "../api/comment";
-import { useQueryClient } from "react-query";
+import { offSplash } from "../slices/splashSlice";
+
+import { useAllToiletsQuery } from "../api/toilet";
+import { useToiletModalInfoQuery } from "../api/comment";
+
+import { CommentInfoProps } from "../types/comment";
+import { ToiletInfoProps } from "../types/toilet";
+import { ModalPopUpState } from "../types/common";
 
 interface Center {
   lat: number;
@@ -31,21 +31,17 @@ interface Center {
 }
 
 const Main = () => {
-  // useEffect(() => {
-  //   setTimeout(() => {
-  //     dispatch(offSplash());
-  //   }, 3000);
-  // }, []);
-  const queryClient = useQueryClient();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const allToilets = useAllToiletsQuery();
+
   const modal = useSelector<RootState>((state) => state.modal.value);
+  const splash = useSelector<RootState>((state) => state.splash.value);
+  const center = useSelector<RootState, Center>((state) => state.center.value);
   const callGeoLocationApi = useSelector<RootState>(
     (state) => state.callGeoApi.value
   );
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-  // const [userInfo, setUserInfo] = useState<IUser | null>(null);
-  const splash = useSelector<RootState>((state) => state.splash.value);
-  const center = useSelector<RootState, Center>((state) => state.center.value);
   const currentLocation = useSelector<RootState, Center>(
     (state) => state.currentLocation.value
   );
@@ -53,34 +49,28 @@ const Main = () => {
     (state) => state.locationAllow.value
   );
 
-  // const [center, setCenter] = useState({
-  //   center: {
-  //     lat: 37.5697,
-  //     lng: 126.982,
-  //   },
-  //   isAllow: false,
-  // });
-
-  const [isLoading, setIsLoading] = useState(true);
-
+  const [drawer, setDrawer] = useState<boolean>(false);
+  const [drawerClose, setDrawerClose] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [modalPopUp, setModalPopUp] = useState<ModalPopUpState>("hidden");
-  const [create, setCreate] = useState(false);
+  const [currentPositions, setCurrentPositions] = useState<any[]>([]);
+  const [create, setCreate] = useState<boolean>(false);
+  const [toiletId, setToiletId] = useState(0);
   const [currentArea, setCurrentArea] = useState({
     sw: { lat: 0, lng: 0 },
     ne: { lat: 0, lng: 0 },
   });
-  const [currentPositions, setCurrentPositions] = useState<any[]>([]);
   const [toiletInfo, setToiletInfo] = useState<ToiletInfoProps>({
     title: "",
     roadName: "",
     id: 0,
+    latlng: { lat: 37.5566, lng: 126.996 },
   });
   const [commentInfo, setCommentInfo] = useState<CommentInfoProps>({
     length: 0,
     avg: 0,
   });
-  const [drawer, setDrawer] = useState<boolean>(false);
-  const [drawerClose, setDrawerClose] = useState<boolean>(false);
+
   const drawerAction = () => {
     setDrawerClose(true);
     setTimeout(() => {
@@ -88,41 +78,12 @@ const Main = () => {
       setDrawerClose(false);
     }, 500);
   };
-  const [toiletId, setToiletId] = useState(2014);
 
   useToiletModalInfoQuery(toiletId, (data) => {
     if (isNaN(data.sum) || isNaN(data.avg))
       setCommentInfo({ length: 0, avg: 0 });
     else setCommentInfo({ length: data.length, avg: data.avg });
   });
-
-  const overlayClass = () => {
-    if (drawerClose)
-      return "animate-overlayHide absolute top-0 bg-black opacity-40 w-full h-[100vh] z-40";
-    else return "absolute top-0 bg-black opacity-40 w-full h-[100vh] z-40";
-  };
-
-  // const commentRequest = async (toiletId: number) => {
-  // const request = await customAxios.get(`/toilets/${toiletId}/comments`);
-  // const { commentList } = request.data;
-  // queryClient.fetchQuery(["allComments", toiletId]);
-  // const commentList = toiletModalInfo?.data?.commentList;
-  // const length = commentList?.length;
-  // const ratingList = commentList?.map((comment: IComment) => comment.rating);
-  // const sum = ratingList?.reduce((prev: number, curr: number) => {
-  //   return prev + curr;
-  // }, 0);
-  // const avg = Math.round((sum / length) * 10) / 10;
-  // if (isNaN(sum) || isNaN(avg)) setCommentInfo({ length: 0, avg: 0 });
-  // else setCommentInfo({ length, avg });
-  // };
-
-  const allToilets = useAllToiletsQuery();
-  // const userInfo = useUserInfoQuery();
-
-  // useEffect(() => {
-  //   customAxios.get("/users").then((res) => setUserInfo(res.data.userInfo));
-  // }, []);
 
   useEffect(() => {
     if (navigator.geolocation && callGeoLocationApi) {
@@ -141,18 +102,11 @@ const Main = () => {
             })
           );
           dispatch(changeLocationAllow(true));
-          // setCenter((prev) => ({
-          //   ...prev,
-          //   center: {
-          //     lat: position.coords.latitude,
-          //     lng: position.coords.longitude,
-          //   },
-          //   isAllow: true,
-          // }));
+
           setIsLoading(false);
           dispatch(pauseGeoLocationApi());
         },
-        (err) => {
+        () => {
           setIsLoading(false);
         }
       );
@@ -172,10 +126,6 @@ const Main = () => {
         lng: map.getBounds().getNorthEast().getLng(),
       },
     });
-    // const position = map.getCenter();
-    // const lat = position.getLat();
-    // const lng = position.getLng();
-    // dispatch(changeCenter({ lat, lng }));
   };
 
   const includePositions = () => {
@@ -195,6 +145,21 @@ const Main = () => {
   useEffect(() => {
     includePositions();
   }, [currentArea, allToilets.data, center]);
+
+  useEffect(() => {
+    if (window.history.length !== 1) dispatch(offSplash());
+    else {
+      setTimeout(() => {
+        dispatch(offSplash());
+      }, 3000);
+    }
+  }, []);
+
+  const overlayClass = () => {
+    if (drawerClose)
+      return "animate-overlayHide absolute top-0 bg-black opacity-40 w-full h-[100vh] z-40";
+    else return "absolute top-0 bg-black opacity-40 w-full h-[100vh] z-40";
+  };
 
   return (
     <>
@@ -255,10 +220,13 @@ const Main = () => {
               }}
             >
               <>
-                {/* setCenter Props, data props 삭제 from SearchBar, CurrentLocationButton */}
                 <SearchBar />
-                <NavButton setDrawer={setDrawer} />
+                <NavButton
+                  setDrawer={setDrawer}
+                  setModalPopUp={setModalPopUp}
+                />
                 <CurrentLocationButton />
+
                 {isLoading ? (
                   <Loading content="현재 위치 불러 오는 중" />
                 ) : (
@@ -271,7 +239,6 @@ const Main = () => {
                           setToiletId(position.id);
                           setModalPopUp("pop-up");
                           setToiletInfo(position);
-                          // commentRequest(position.id);
                         }}
                         image={{
                           src: "/images/main/marker-icon.png",
@@ -281,6 +248,7 @@ const Main = () => {
                     ))}
                   </MarkerClusterer>
                 )}
+
                 {locationAllow && (
                   <MapMarker
                     key="current-location"
@@ -307,11 +275,7 @@ const Main = () => {
                 action={() => navigate("/login")}
               />
             )}
-            <Drawer
-              drawer={drawer}
-              drawerClose={drawerClose}
-              // userInfo={userInfo?.data}
-            />
+            <Drawer drawer={drawer} drawerClose={drawerClose} />
           </>
         </div>
       )}

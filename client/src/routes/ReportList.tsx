@@ -1,37 +1,19 @@
-import { useEffect, useState } from "react";
-import DrawerHeader from "../components/DrawerHeader";
-import Report from "../components/Report";
-import { IReport } from "../types/report";
-import { getQueryString } from "../lib/utils";
+import DrawerHeader from "../components/common/DrawerHeader";
+import Report from "../components/report/Report";
+import { useState } from "react";
 import { useAllReportsQuery } from "../api/report";
+import { getQueryString } from "../lib/utils";
+import { IReport } from "../types/report";
 
 const ReportList = () => {
   const reportType = getQueryString();
-  // const [reportList, setReportList] = useState<IReport[]>([]);
   const allReports = useAllReportsQuery(reportType);
+
   const [page, setPage] = useState(1);
   const limit = 7;
   const offset = (page - 1) * limit;
   const numPages = Math.ceil(allReports?.data?.length / limit);
   const pageGroup = Math.ceil(page / 5) - 1;
-
-  // console.log("fad", allReports.data);
-
-  // const reportListRequest = async () => {
-  // const request = await customAxios.get("/reports");
-  // const list = request.data.reportList;
-  // const reports = allReports?.data?.filter(
-  //   (report: IReport) => report.reportType === reportType
-  // );
-  // setReportList(reports);
-  // };
-
-  const indexClass = (index: number) => {
-    if (index === page)
-      return "cursor-pointer pt-2 pb-[9px] px-[10px] text-base font-normal leading-[26px] text-tnBlack";
-    else
-      return "cursor-pointer pt-2 pb-[9px] px-[10px] text-base font-normal leading-[26px] text-gray20";
-  };
 
   const nextPageIconAction = () => {
     if (page === Math.ceil(allReports?.data?.length / 7)) return;
@@ -47,9 +29,12 @@ const ReportList = () => {
     }
   };
 
-  // useEffect(() => {
-  //   reportListRequest();
-  // }, []);
+  const indexClass = (index: number) => {
+    if (index === page)
+      return "cursor-pointer pt-2 pb-[9px] px-[10px] text-base font-normal leading-[26px] text-tnBlack";
+    else
+      return "cursor-pointer pt-2 pb-[9px] px-[10px] text-base font-normal leading-[26px] text-gray20";
+  };
 
   return (
     <>
@@ -66,6 +51,7 @@ const ReportList = () => {
               return <Report key={report.id} report={report} />;
             })}
       </div>
+
       <div className="px-20 py-[17px] flex justify-center items-center h-full">
         <img
           className="w-6 h-6 cursor-pointer"
@@ -77,6 +63,7 @@ const ReportList = () => {
           }
           alt="prev"
         />
+
         <div className="flex">
           {numPages &&
             Array(numPages)
@@ -95,6 +82,7 @@ const ReportList = () => {
                 }
               })}
         </div>
+
         <img
           className="w-6 h-6 cursor-pointer"
           onClick={nextPageIconAction}

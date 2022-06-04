@@ -1,21 +1,19 @@
-import DrawerHeader from "../components/DrawerHeader";
-import Modal from "../components/Modal";
-import { useNavigate } from "react-router-dom";
+import DrawerHeader from "../components/common/DrawerHeader";
+import Modal from "../components/common/Modal";
 import { useEffect, useState } from "react";
-import { customAxios } from "../lib/customAxios";
-import { DispatchProp, useDispatch, useSelector } from "react-redux";
-import { logoutHandler } from "../slices/isLoginSlice";
-import { displayModal } from "../slices/modalSlice";
+import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store/store";
-import { getQueryString } from "../lib/utils";
-import { useChangeNickname, useSignOutQuery } from "../api/user";
-import { Dispatch } from "@reduxjs/toolkit";
+import { displayModal } from "../slices/modalSlice";
 import { useQueryClient } from "react-query";
+import { useChangeNickname, useSignOutQuery } from "../api/user";
+import { getQueryString } from "../lib/utils";
 
 const EditProfile = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const nickname = decodeURI(getQueryString());
+
   const modal = useSelector<RootState>((state) => state.modal.value);
   const [value, setValue] = useState(nickname);
   const [modalTitle, setModalTitle] = useState<string>("");
@@ -24,22 +22,7 @@ const EditProfile = () => {
   const [isNickname, setIsNickname] = useState<boolean>(false);
   const [errState, setErrState] = useState<boolean>(true);
 
-  useEffect(() => {
-    if (
-      nicknameMessage === "사용 가능한 닉네임입니다." &&
-      modalTitle !== "이미 존재하는 닉네임입니다!" &&
-      nickname.length >= 2
-    )
-      setErrState(false);
-    else setErrState(true);
-  }, [nicknameMessage, modalTitle, nickname]);
-
   const queryClient = useQueryClient();
-  const signOut = useSignOutQuery(() => {
-    queryClient.clear();
-    navigate("/", { replace: true });
-  });
-
   const changeNickname = useChangeNickname(
     () => {
       setModalTitle("닉네임 변경이 완료되었습니다!");
@@ -50,24 +33,28 @@ const EditProfile = () => {
       dispatch(displayModal());
     }
   );
+  const signOut = useSignOutQuery(() => {
+    queryClient.clear();
+    navigate("/", { replace: true });
+  });
 
   const submitHandler = async () => {
     changeNickname.mutate(value);
-    // await customAxios
-    //   .patch("/users", { changedNickname: value })
-    //   .then((res) => {
-    //     if (res.status === 200) {
-    //       setModalTitle("닉네임 변경이 완료되었습니다!");
-    //       dispatch(displayModal());
-    //     }
-    //   })
-    //   .catch((err) => {
-    //     if (err.response.status === 409) {
-    //       setModalTitle("이미 존재하는 닉네임입니다!");
-    //       dispatch(displayModal());
-    //     }
-    //   });
   };
+
+  const secessionRequest = async () => {
+    signOut.mutate();
+  };
+
+  useEffect(() => {
+    if (
+      nicknameMessage === "사용 가능한 닉네임입니다." &&
+      modalTitle !== "이미 존재하는 닉네임입니다!" &&
+      nickname.length >= 2
+    )
+      setErrState(false);
+    else setErrState(true);
+  }, [nicknameMessage, modalTitle, nickname]);
 
   const onChangeValue = (e: React.FormEvent<HTMLInputElement>) => {
     const nicknameRegex = /^[가-힣]{2,8}$/;
@@ -89,19 +76,6 @@ const EditProfile = () => {
     else if (isNickname && value.length) return defaultClass + "border-tnBlue";
     else if (!isNickname && value.length) return defaultClass + "border-tnRed";
     else return defaultClass + "border-gray20";
-  };
-
-  const secessionRequest = async () => {
-    signOut.mutate();
-    // await customAxios
-    //   .delete("/users")
-    //   .then((res) => {
-    //     if (res.status === 200) {
-    //       dispatch(logoutHandler());
-    //       navigate("/");
-    //     }
-    //   })
-    //   .catch((err) => console.log(err));
   };
 
   return (
@@ -153,6 +127,7 @@ const EditProfile = () => {
             </span>
           ) : null}
         </div>
+
         <div
           onClick={() => {
             setModalTitle("정말 탈퇴하시겠습니까?😢");

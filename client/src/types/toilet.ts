@@ -37,6 +37,7 @@ export interface ToiletInfoProps {
   title: string;
   roadName: string;
   id: number;
+  latlng: Latlng;
 }
 
 export interface ToiletSummaryProps {

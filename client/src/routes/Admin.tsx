@@ -1,16 +1,17 @@
+import DrawerHeader from "../components/common/DrawerHeader";
+import Loading from "../components/common/Loading";
+import Modal from "../components/common/Modal";
 import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { useUserInfoQuery } from "../api/user";
-import DrawerHeader from "../components/DrawerHeader";
-import Loading from "../components/Loading";
-import Modal from "../components/Modal";
-import { displayModal } from "../slices/modalSlice";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store/store";
+import { displayModal } from "../slices/modalSlice";
+import { useUserInfoQuery } from "../api/user";
 
 const Admin = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
   const modal = useSelector<RootState>((state) => state.modal.value);
   const userInfo = useUserInfoQuery();
 

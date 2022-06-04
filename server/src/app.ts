@@ -5,9 +5,9 @@ import helmet from "helmet";
 import userRouter from "./router/users";
 import toiletRouter from "./router/toilets";
 import reportRouter from "./router/reports";
+import cookieparser from "cookie-parser";
 import "reflect-metadata";
 import { DB } from "./data-source";
-import cookieparser from "cookie-parser";
 
 DB.initialize();
 

@@ -1,13 +1,13 @@
 import { Request, Response } from "express";
+import axios from "axios";
+import { CustomRequest } from "../type/middleware";
+import jwt from "jsonwebtoken";
 import { DB } from "../data-source";
 import { User } from "../entity/User";
-import axios from "axios";
-import jwt from "jsonwebtoken";
-import dotenv from "dotenv";
-import { CustomRequest } from "../customType/middleware";
 import { Comment } from "../entity/Comment";
 import { Like } from "../entity/Like";
 import { Report } from "../entity/Report";
+import dotenv from "dotenv";
 
 dotenv.config();
 
@@ -57,7 +57,6 @@ const userController = {
 
   signUp: async (req: Request, res: Response) => {
     const { nickname, email, oAuthProvider, oAuthId } = req.body;
-    // 클라이언트에서 받아온 요청 바디 값들을 user 테이블에 insert한다.
 
     try {
       const isOverlapNickname = await DB.manager.findOne(User, {
@@ -126,7 +125,6 @@ const userController = {
       const kakaoUserEmail = kakaoUserInfo.kakao_account.email;
 
       // DB에 해당 oauthProvider(KAKAO)와 oauthProviderId 세트가 있는지 확인.
-      // 조건 : oauthProvider가 "kakao" + oauthProviderId가 kakaoOauthId 인 레코드가 있는지 없는지 찾는다.
       const queryResult = await DB.manager.findOne(User, {
         where: { oAuthProvider: "kakao", oAuthProviderId: kakaoOauthId },
       });
@@ -144,19 +142,14 @@ const userController = {
           "Set-Cookie",
           `token=${tunaToken}; Path=/; Max-age=${maxAge};`
         );
-        // return res.redirect("https://tunamayo-toilet.com");
-        return res.redirect(301, `http://localhost:3000${redirectPath}`);
+        return res.redirect(301, `https://tunamayo-toilet.com${redirectPath}`);
       }
       // CASE2) 처음 가입하는 유저인 경우 -> 클라이언트의 가입 페이지로 리다이렉트 시켜줌.
-      // return res.redirect(
-      //   `https://tunamayo-toilet.com/signup?oauthprovider=kakao&oauthid=${kakaoOauthId}&email=${kakaoUserEmail}`
-      // );
       return res.redirect(
         301,
-        `http://localhost:3000/signup?oauthprovider=kakao&oauthid=${kakaoOauthId}&email=${kakaoUserEmail}&redirect=${redirectPath}`
+        `https://tunamayo-toilet.com/signup?oauthprovider=kakao&oauthid=${kakaoOauthId}&email=${kakaoUserEmail}&redirect=${redirectPath}`
       );
     } catch (err) {
-      console.log(err);
       return res.sendStatus(500);
     }
   },
@@ -203,7 +196,6 @@ const userController = {
       const googleUserEmail = googleUserInfo.emailAddresses[0].value;
 
       // DB에 해당 oauthProvider(GOOGLE)와 oauthProviderId 세트가 있는지 확인.
-      // 조건 : oauthProvider가 "google" + oauthProviderId가 googleOauthId 인 레코드가 있는지 없는지 찾는다.
       const queryResult = await DB.manager.findOne(User, {
         where: { oAuthProvider: "google", oAuthProviderId: googleOauthId },
       });
@@ -221,20 +213,14 @@ const userController = {
           "Set-Cookie",
           `token=${tunaToken}; Path=/; Max-age=${maxAge};`
         );
-        // return res.redirect("https://tunamayo-toilet.com");
-        return res.redirect(301, `http://localhost:3000${redirectPath}`);
+        return res.redirect(301, `https://tunamayo-toilet.com${redirectPath}`);
       }
       // CASE2) 처음 가입하는 유저인 경우 -> 클라이언트의 가입 페이지로 리다이렉트 시켜줌.
-      // return res.redirect(
-      //   `https://tunamayo-toilet.com/signup?oauthprovider=google&oauthid=${googleOauthId}&email=${googleUserEmail}`
-      // );
       return res.redirect(
         301,
-        `http://localhost:3000/signup?oauthprovider=google&oauthid=${googleOauthId}&email=${googleUserEmail}&redirect=${redirectPath}`
+        `https://tunamayo-toilet.com/signup?oauthprovider=google&oauthid=${googleOauthId}&email=${googleUserEmail}&redirect=${redirectPath}`
       );
-      // return res.sendStatus(200);
     } catch (err) {
-      console.log(err);
       return res.sendStatus(500);
     }
   },

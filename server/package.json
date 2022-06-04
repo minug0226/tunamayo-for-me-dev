@@ -1,7 +1,7 @@
 {
   "name": "server",
   "version": "1.0.0",
-  "description": "",
+  "description": "tunamayo api server",
   "main": "index.js",
   "scripts": {
     "start": "node dist/app.js",
@@ -9,7 +9,7 @@
     "build": "tsc -p .",
     "typeorm": "typeorm-ts-node-commonjs"
   },
-  "author": "",
+  "author": "devengers",
   "license": "ISC",
   "dependencies": {
     "axios": "^0.26.1",

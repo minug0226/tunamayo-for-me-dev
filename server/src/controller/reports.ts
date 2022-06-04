@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { CustomRequest } from "../customType/middleware";
+import { CustomRequest } from "../type/middleware";
 import { DB } from "../data-source";
 import { Report } from "../entity/Report";
 

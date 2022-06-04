@@ -1,5 +1,3 @@
-import { Dispatch, SetStateAction } from "react";
-
 export interface MyCommentProps {
   content: string;
   createdAt: string;
@@ -33,7 +31,5 @@ export interface CommentProps {
   userId: number;
   toiletId: number;
   commentId: number;
-  // setDeleteState: Dispatch<SetStateAction<boolean>>;
-  // deleteState: boolean;
   createdAt: string;
 }
