@@ -88,7 +88,7 @@ const WriteComment = () => {
         </div>
 
         <div className="pt-1 mb-4 text-center font-normal text-sm leading-[22px] text-gray20">
-          좌우로 드래그하여 별점을 매겨주세요!
+          탭 하거나 좌우로 드래그하여 별점을 매겨주세요!
         </div>
         <div className="h-[1px] bg-[#F6F6F6] mb-4"></div>
         <div className="px-5 relative">

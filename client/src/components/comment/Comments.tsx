@@ -110,7 +110,7 @@ const Comments = () => {
         )}
 
         {allComments.data?.length ? null : (
-          <div className="flex flex-col items-center pt-20">
+          <div className="flex flex-col items-center py-20">
             <img
               className="mb-1 w-12 h-12"
               src="/images/toilet/no-review-icon.svg"
